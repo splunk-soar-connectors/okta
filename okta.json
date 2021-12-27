@@ -15,6 +15,7 @@
     "app_wizard_version": "1.0.0",
     "app_version": "2.2.0",
     "python_version": "3",
+    "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, Version 2021.02.1"
     ],
