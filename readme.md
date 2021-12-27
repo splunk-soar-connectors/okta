@@ -64,3 +64,11 @@ pagination mechanism.
     Here the None is considered as empty parameter value
 
     -   This will fetch all 950 items
+
+## Port Information
+The app uses HTTP/ HTTPS protocol for communicating with the Okta server. Below are the default ports used by Splunk SOAR.
+
+SERVICE NAME | TRANSPORT PROTOCOL | PORT
+------------ | ------------------ | ----
+**http** | tcp | 80
+**https** | tcp | 443

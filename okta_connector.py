@@ -15,18 +15,19 @@
 #
 #
 # Phantom App imports
+import json
+import sys
+import time
+from urllib.parse import unquote
+
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
+import requests
+from bs4 import BeautifulSoup, UnicodeDammit
 from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 # Usage of the consts file is recommended
 from okta_consts import *
-import requests
-import json
-from bs4 import BeautifulSoup, UnicodeDammit
-from urllib.parse import unquote
-import time
-import sys
 
 
 class RetVal(tuple):
@@ -91,7 +92,8 @@ class OktaConnector(BaseConnector):
             # To ensure that there will be no parsing errors while fetching json data from output response
             r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_error_message_from_exception(e))), None)
+            return RetVal(action_result.set_status(
+                phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_error_message_from_exception(e))), None)
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
@@ -111,7 +113,8 @@ class OktaConnector(BaseConnector):
             # To ensure that there will be no parsing errors while fetching json data from output response
             resp_json = r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_error_message_from_exception(e))), None)
+            return RetVal(action_result.set_status(
+                phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_error_message_from_exception(e))), None)
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
@@ -242,7 +245,8 @@ class OktaConnector(BaseConnector):
                             params=params,
                             verify=config.get('verify_server_cert', False))
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(self._get_error_message_from_exception(e))), resp_json)
+            return RetVal(action_result.set_status(
+                phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(self._get_error_message_from_exception(e))), resp_json)
 
         return self._process_response(r, action_result)
 
@@ -444,7 +448,8 @@ class OktaConnector(BaseConnector):
             params['sendEmail'] = False
 
         # make rest call
-        ret_val, response = self._make_rest_call('/users/{}/lifecycle/reset_password'.format(user_id), action_result, params=params, method='post')
+        ret_val, response = self._make_rest_call(
+            '/users/{}/lifecycle/reset_password'.format(user_id), action_result, params=params, method='post')
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -823,7 +828,8 @@ class OktaConnector(BaseConnector):
                     factor_link_verify_uri = factor_link_verify_href.split('v1')[1]
             if not factor_link_verify_uri:
                 self.save_progress("[-] error retriving factor_type: " + factor_type)
-                return action_result.set_status(phantom.APP_ERROR, OKTA_SEND_PUSH_NOTIFICATION_ERR_MSG.format(factor_type=factor_type, user_id=user_id))
+                return action_result.set_status(
+                    phantom.APP_ERROR, OKTA_SEND_PUSH_NOTIFICATION_ERR_MSG.format(factor_type=factor_type, user_id=user_id))
 
             # call verify
             ret_val, response_verify = self._make_rest_call(factor_link_verify_uri, action_result, method='post')
@@ -835,11 +841,14 @@ class OktaConnector(BaseConnector):
                 transaction_url = response_verify.get('_links', {}).get('poll', {}).get('href', {})
                 if not transaction_url:
                     if factor_type == "sms":
-                        return action_result.set_status(phantom.APP_ERROR, "The action has not yet been implemented for the 'sms' factortype workflow")
+                        return action_result.set_status(
+                            phantom.APP_ERROR, "The action has not yet been implemented for the 'sms' factortype workflow")
                     elif factor_type == "token:software:totp":
-                        return action_result.set_status(phantom.APP_ERROR, "The action has not yet been implemented for the 'token:software:totp' factortype workflow")
+                        return action_result.set_status(
+                            phantom.APP_ERROR, "The action has not yet been implemented for the 'token:software:totp' factortype workflow")
                     else:
-                        return action_result.set_status(phantom.APP_ERROR, "Error occurred while fetching the polling link for the 'push' factortype workflow")
+                        return action_result.set_status(
+                            phantom.APP_ERROR, "Error occurred while fetching the polling link for the 'push' factortype workflow")
 
                 transaction_url = transaction_url.split('v1')[1]
             except Exception as e:
@@ -865,7 +874,8 @@ class OktaConnector(BaseConnector):
                     ack_flag = True
                     self.save_progress("[-] Okta Verify ACK: {}".format(str(response_verify_ack)))
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Error occurred while processing reponse from server. {}".format(self._get_error_message_from_exception(e)))
+            return action_result.set_status(
+                phantom.APP_ERROR, "Error occurred while processing reponse from server. {}".format(self._get_error_message_from_exception(e)))
 
         action_result.add_data(response_verify_ack)
 
@@ -973,8 +983,9 @@ class OktaConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
@@ -1017,7 +1028,7 @@ if __name__ == '__main__':
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: " + str(e))
-            exit(1)
+            sys.exit(1)
 
     with open(args.input_test_json) as f:
         in_json = f.read()
@@ -1034,4 +1045,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
