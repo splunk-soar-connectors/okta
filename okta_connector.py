@@ -374,7 +374,7 @@ class OktaConnector(BaseConnector):
 
         if users_list is None:
             return action_result.set_status(phantom.APP_ERROR,
-                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()))
+                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()) + " Error Details: {}".format(action_result.get_message()))
 
         # Add the users_list into the data section
         for item in users_list:
@@ -412,7 +412,7 @@ class OktaConnector(BaseConnector):
 
         if user_groups_list is None:
             return action_result.set_status(phantom.APP_ERROR,
-                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()))
+                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()) + " Error Details: {}".format(action_result.get_message()))
 
         # Add the response into the data section
         for item in user_groups_list:
@@ -682,7 +682,7 @@ class OktaConnector(BaseConnector):
 
         if providers_list is None:
             return action_result.set_status(phantom.APP_ERROR,
-                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()))
+                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()) + " Error Details: {}".format(action_result.get_message()))
 
         # Add the response into the data section
         for item in providers_list:
@@ -710,7 +710,7 @@ class OktaConnector(BaseConnector):
 
         if roles_list is None:
             return action_result.set_status(phantom.APP_ERROR,
-                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()))
+                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()) + " Error Details: {}".format(action_result.get_message()))
 
         # Add the response into the data section
         for item in roles_list:
