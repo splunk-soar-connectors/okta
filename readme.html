@@ -74,5 +74,97 @@ Total items in the end system for reference in the below examples are 950 and in
             </tr>
         </table>
     </p>
+    <p>
+        <h2>Permissions</h2>
+        <p>
+            Super admins can assign admin permissions to individuals or groups.
+            <br>
+            <b>Individual</b> assignments are better for a manageable number of admin accounts. When you assign admin permissions to individuals, you do so one at a time, whenever necessary. Remember that every org must always have at least one individually assigned super admin.
+            <br>
+            <b>Admin groups</b> work better when you need to onboard a large number of admins quickly. Assign those admins to one group, and then grant admin permissions to that group. Okta groups, AD groups, and LDAP groups are all eligible.
+            <br><br>
+            To assign the roles to any user, it is required to run the <b>"assign role"</b> action using the asset configured with the API token of a <b>Super admin user(SUPER_ADMIN)</b> in the OKTA server to assign appropriate permissions to that normal user.
+            <br><br>
+            Step to assign a Super admin role to user or group.
+            <br>
+            <ul>
+                <li>1. In the Admin Console, go to <b>Security > Administrators</b>.
+                </li>
+                <li>
+                    2. Click <b>Add Administrator</b>, depending on whether you are assigning privileges to an individual or group.
+                </li>
+                <li>
+                    3. In the <b>Grant administrator role to</b> field, begin typing the name of the user that we want to assign admin privileges to and select the correct user from the search list.
+                </li>
+                <li>
+                    4. Select the <b>Super Administrator</b> roles you want the user or group to have. You can assign multiple admin roles to an individual or group.
+                </li>
+                <li>
+                    5. Some admin roles require additional input. If you selected Application Administrator, Group Administrator, Help Desk Administrator, or Group Membership Administrator, you need to indicate whether that role administers all users, groups, or apps, or just specific ones. (Copy and Paste commands allow you to apply the same assignments to multiple roles).
+                </li>
+                <li>
+                    6. Click Add Administrator to complete the assignment.
+                </li>
+            </ul>
+            <br>
+        </p>
+        <p>
+            The following tables show the Details of the roles and what they can perform.
+            <table>
+              <tr>
+                <td>Role type</td>
+                <td>Label</td>
+                <td>Detail</td>
+              </tr>
+              <tr>
+                <td>SUPER_ADMIN</td>
+                <td>Super Administrator</td>
+                <td>Perform all admin activities for an org. Super admins have full management access.</td>
+              </tr>
+              <tr>
+                <td>ORG_ADMIN</td>
+                <td>Organization Administrator</td>
+                <td>Perform most admin activities for an org. Note: Org admins cannot manage applications, authorization servers, hooks, Okta Mobile, or other admins.
+                </td>
+              </tr>
+              <tr>
+                <td>APP_ADMIN</td>
+                <td>Application Administrator</td>
+                <td>View and manage user permissions in an application. Note: You can specify one or more applications after selecting this role.
+                </td>
+              </tr>
+              <tr>
+                <td>USER_ADMIN</td>
+                <td>Group Administrator</td>
+                <td>Manage users, their profiles, and their credentials. Note: You can specify one or more groups after selecting this role.</td>
+              </tr>
+              <tr>
+                <td>HELP_DESK_ADMIN</td>
+                <td>Help Desk Administrator</td>
+                <td>View and unlock users, reset passwords and reset MFA. Note: You can specify one or more groups after selecting this role.</td>
+              </tr>
+              <tr>
+                <td>GROUP_MEMBERSHIP_ADMIN</td>
+                <td>Group Membership Administrator</td>
+                <td>Manages the membership of groups. Note: You can specify one or more groups after selecting this role.</td>
+              </tr>
+              <tr>
+                <td>READ_ONLY_ADMIN</td>
+                <td>Read Only Administrator</td>
+                <td>View most data in the Admin Console.</td>
+              </tr>
+              <tr>
+                <td>API_ACCESS_MANAGEMENT_ADMIN</td>
+                <td>API Access Management Administrator</td>
+                <td>Build custom authorization servers to protect your API endpoints.</td>
+              </tr>
+              <tr>
+                <td>REPORT_ADMIN</td>
+                <td>Report Administrator</td>
+                <td>View all reports and the System log.</td>
+              </tr>
+            </table>
+        </p>
+    </p>
 </body>
 </html>
