@@ -1,6 +1,6 @@
 # File: okta_connector.py
 #
-# Copyright (c) 2018-2021 Splunk Inc.
+# Copyright (c) 2018-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -715,7 +715,7 @@ class OktaConnector(BaseConnector):
 
         if roles_list is None:
             return action_result.set_status(phantom.APP_ERROR,
-                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()), error_deatail=action_result.get_message())
+                    OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier()), error_detail=action_result.get_message())
 
         # Add the response into the data section
         for item in roles_list:

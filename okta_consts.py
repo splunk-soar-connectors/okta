@@ -1,6 +1,6 @@
 # File: okta_consts.py
 #
-# Copyright (c) 2018-2021 Splunk Inc.
+# Copyright (c) 2018-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ OKTA_RESET_PASSWORD_SUCC = "Successfully created one-time token for user to rese
 
 OKTA_LIMIT_INVALID_MSG_ERR = "Please provide a valid positive integer value for 'limit' action parameter"
 OKTA_LIMIT_NON_ZERO_POSITIVE_MSG_ERR = "Please provide a valid non-zero positive integer value for 'limit' action parameter"
-OKTA_PAGINATION_MSG_ERR = "Error occurred while fetching paginated response for action: {action_name} \n Error Details: {error_detail}"
+OKTA_PAGINATION_MSG_ERR = "Error occurred while fetching paginated response for action: {action_name}. Error Details: {error_detail}"
 
 OKTA_DISABLE_USER_SUCC = "Successfully disabled the user"
 OKTA_ALREADY_DISABLED_USER_ERR = "User is already disabled"

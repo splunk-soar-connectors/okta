@@ -9,7 +9,7 @@
     "logo_dark": "logo_okta_dark.svg",
     "publisher": "Splunk",
     "name": "Okta",
-    "license": "Copyright (c) 2018-2021 Splunk Inc.",
+    "license": "Copyright (c) 2018-2022 Splunk Inc.",
     "min_phantom_version": "5.0.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
@@ -17,7 +17,7 @@
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud, Version 2021.02.1"
+        "Cloud, Version 2021.11.2"
     ],
     "type": "identity management",
     "main_module": "okta_connector.py",
