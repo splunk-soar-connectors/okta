@@ -90,7 +90,7 @@ class OktaConnector(BaseConnector):
         # Try a json parse
         try:
             # To ensure that there will be no parsing errors while fetching json data from output response
-            r.json()
+            resp_json = r.json()
         except Exception as e:
             return RetVal(action_result.set_status(
                 phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(self._get_error_message_from_exception(e))), None)
@@ -102,7 +102,11 @@ class OktaConnector(BaseConnector):
 
         # You should process the error returned in the json
         error_msg = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
-        error_msg = r.json().get("errorSummary", error_msg)
+        error_msg = resp_json.get("errorSummary", error_msg)
+
+        error_cause = resp_json.get("errorCauses", [{}])
+        if error_cause:
+            error_msg += '. Error Causes:' + error_cause[0].get("errorSummary", "")
 
         message = "Error from server. Status Code: {0} Data from server: {1}".format(
                 r.status_code, error_msg)
@@ -125,8 +129,15 @@ class OktaConnector(BaseConnector):
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
+        error_msg = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
+        error_msg = resp_json.get("errorSummary", error_msg)
+
+        error_cause = resp_json.get("errorCauses", [{}])
+        if error_cause:
+            error_msg += '. Error Causes:' + error_cause[0].get("errorSummary", "")
+
         message = "Error from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}')))
+                r.status_code, error_msg)
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
