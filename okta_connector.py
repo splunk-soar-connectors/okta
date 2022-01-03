@@ -106,7 +106,7 @@ class OktaConnector(BaseConnector):
 
         error_cause = resp_json.get("errorCauses", [{}])
         if error_cause:
-            error_msg += '. Error Causes:' + error_cause[0].get("errorSummary", "")
+            error_msg += '. Error Causes: ' + error_cause[0].get("errorSummary", "")
 
         message = "Error from server. Status Code: {0} Data from server: {1}".format(
                 r.status_code, error_msg)
@@ -134,7 +134,7 @@ class OktaConnector(BaseConnector):
 
         error_cause = resp_json.get("errorCauses", [{}])
         if error_cause:
-            error_msg += '. Error Causes:' + error_cause[0].get("errorSummary", "")
+            error_msg += '. Error Causes: ' + error_cause[0].get("errorSummary", "")
 
         message = "Error from server. Status Code: {0} Data from server: {1}".format(
                 r.status_code, error_msg)
