@@ -125,11 +125,8 @@ class OktaConnector(BaseConnector):
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
-        error_msg = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
-        error_msg = r.json().get("errorSummary", error_msg)
-
         message = "Error from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, error_msg)
+                r.status_code, self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}')))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
