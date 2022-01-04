@@ -3,7 +3,7 @@
     "product_version_regex": ".*",
     "description": "This app supports various identity management actions on Okta",
     "package_name": "phantom_okta",
-    "utctime_updated": "2021-11-10T17:47:03.000000Z",
+    "utctime_updated": "2022-01-04T06:22:15.000000Z",
     "product_vendor": "Okta",
     "logo": "logo_okta.svg",
     "logo_dark": "logo_okta_dark.svg",
@@ -13,7 +13,7 @@
     "min_phantom_version": "5.0.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
-    "app_version": "2.2.0",
+    "app_version": "2.2.1",
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
@@ -3397,7 +3397,7 @@
             "description": "Assign a role to a user",
             "type": "generic",
             "identifier": "assign_role",
-            "verbose":"One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>",
             "read_only": false,
             "parameters": {
                 "type": {
@@ -3556,7 +3556,7 @@
             "description": "Unassign a role to a user",
             "type": "generic",
             "identifier": "unassign_role",
-            "verbose":"One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>",
             "read_only": false,
             "parameters": {
                 "user_id": {
