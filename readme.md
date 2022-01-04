@@ -1,5 +1,5 @@
 [comment]: # " File: readme.md"
-[comment]: # "  Copyright (c) 2018-2021 Splunk Inc."
+[comment]: # "  Copyright (c) 2018-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "  Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)"
 [comment]: # ""
@@ -64,3 +64,11 @@ pagination mechanism.
     Here the None is considered as empty parameter value
 
     -   This will fetch all 950 items
+
+## Port Information
+The app uses HTTP/ HTTPS protocol for communicating with the Okta server. Below are the default ports used by Splunk SOAR.
+
+SERVICE NAME | TRANSPORT PROTOCOL | PORT
+------------ | ------------------ | ----
+**http** | tcp | 80
+**https** | tcp | 443

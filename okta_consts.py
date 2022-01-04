@@ -1,6 +1,6 @@
 # File: okta_consts.py
 #
-# Copyright (c) 2018-2021 Splunk Inc.
+# Copyright (c) 2018-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ OKTA_RESET_PASSWORD_SUCC = "Successfully created one-time token for user to rese
 
 OKTA_LIMIT_INVALID_MSG_ERR = "Please provide a valid positive integer value for 'limit' action parameter"
 OKTA_LIMIT_NON_ZERO_POSITIVE_MSG_ERR = "Please provide a valid non-zero positive integer value for 'limit' action parameter"
-OKTA_PAGINATION_MSG_ERR = "Error occurred while fetching paginated response for action: {action_name}"
+OKTA_PAGINATION_MSG_ERR = "Error occurred while fetching paginated response for action: {action_name}. Error Details: {error_detail}"
 
 OKTA_DISABLE_USER_SUCC = "Successfully disabled the user"
 OKTA_ALREADY_DISABLED_USER_ERR = "User is already disabled"
@@ -66,5 +66,7 @@ TYPE_ERR_MSG = "Error occurred while connecting to the Okta Server. Please check
 FACTOR_TYPE_VALUE_LIST = ["push", "sms (not yet implemented)", "token:software:totp (not yet implemented)"]
 RECEIVE_TYPE_VALUE_LIST = ["Email", "UI"]
 IDENTITY_PROVIDERS_TYPE_VALUE_LIST = ["SAML2", "FACEBOOK", "GOOGLE", "LINKEDIN", "MICROSOFT"]
-ROLE_TYPE_VALUE_LIST = ["SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN"]
+ROLE_TYPE_VALUE_LIST = [
+    "SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN",
+    "HELP_DESK_ADMIN", "GROUP_MEMBERSHIP_ADMIN", "REPORT_ADMIN"]
 VALUE_LIST_VALIDATION_MSG = "Please provide valid input from {} in '{}' action parameter"
