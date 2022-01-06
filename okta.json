@@ -3,20 +3,21 @@
     "product_version_regex": ".*",
     "description": "This app supports various identity management actions on Okta",
     "package_name": "phantom_okta",
-    "utctime_updated": "2021-02-23T06:43:59.000000Z",
+    "utctime_updated": "2022-01-06T05:15:14.000000Z",
     "product_vendor": "Okta",
     "logo": "logo_okta.svg",
     "logo_dark": "logo_okta_dark.svg",
     "publisher": "Splunk",
     "name": "Okta",
-    "license": "Copyright (c) 2018-2021 Splunk Inc.",
-    "min_phantom_version": "4.9.39220",
+    "license": "Copyright (c) 2018-2022 Splunk Inc.",
+    "min_phantom_version": "5.0.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
-    "app_version": "2.1.0",
+    "app_version": "2.2.3",
     "python_version": "3",
+    "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud, Version 2021.02.1"
+        "Cloud, Version 2021.11.2"
     ],
     "type": "identity management",
     "main_module": "okta_connector.py",
@@ -54,7 +55,7 @@
         {
             "action": "send push notification",
             "description": "Validate the user prompt with push notification",
-            "verbose": "The action has not yet been implemented for the \"sms\" and the \"token:software:totp\" factortypes.<br>Currently, the action would generate a new OTP for the \"sms\" factortype and will not verify it.<br>The action would fail for the \"token:software:totp\" factortype as it has not yet been implemented.",
+            "verbose": "The action has not yet been implemented for the \"sms\" and the \"token:software:totp\" factortypes.<br>Currently, the action would generate a new OTP for the \"sms\" factortype and will not verify it.<br>The action would fail for the \"token:software:totp\" factortype as it has not yet been implemented.<br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li></ul>",
             "type": "contain",
             "identifier": "send_push_notification",
             "read_only": false,
@@ -330,7 +331,7 @@
         {
             "action": "list users",
             "description": "Get the list of users",
-            "verbose": "Limit parameter is used to provide total number of users to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of users by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>firstName</strong>, <strong>lastName</strong>, or <strong>email</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>status</li><li>lastUpdated</li><li>id</li><li>profile.login</li><li>profile.email</li><li>profile.firstName</li><li>profile.lastName</li></ul><p>Use the <strong>search</strong> parameter to do a case-insensitive search on the following properties:</p><ul><li>id</li><li>status</li><li>created</li><li>activated</li><li>statusChanged</li><li>lastUpdated</li></ul><p>Filter and search operators:</p><ul><li>eq: equal</li><li>sw: starts with</li><li>pr: present (has value)</li><li>gt: greater than</li><li>ge: greater than or equal</li><li>lt: less than</li><li>le: less than or equal</li></ul><p>Filter and search examples:</p><ul><li>status eq \"STAGED\"</li><li>lastUpdated lt \"yyyy-MM-dd'T'HH:mm:ss.SSSZ\"</li><li>lastUpdated gt \"yyyy-MM-dd'T'HH:mm:ss.SSSZ\"</li></ul>.",
+            "verbose": "Limit parameter is used to provide total number of users to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of users by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>firstName</strong>, <strong>lastName</strong>, or <strong>email</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>status</li><li>lastUpdated</li><li>id</li><li>profile.login</li><li>profile.email</li><li>profile.firstName</li><li>profile.lastName</li></ul><p>Use the <strong>search</strong> parameter to do a case-insensitive search on the following properties:</p><ul><li>id</li><li>status</li><li>created</li><li>activated</li><li>statusChanged</li><li>lastUpdated</li></ul><p>Filter and search operators:</p><ul><li>eq: equal</li><li>sw: starts with</li><li>pr: present (has value)</li><li>gt: greater than</li><li>ge: greater than or equal</li><li>lt: less than</li><li>le: less than or equal</li></ul><p>Filter and search examples:</p><ul><li>status eq \"STAGED\"</li><li>lastUpdated lt \"yyyy-MM-dd'T'HH:mm:ss.SSSZ\"</li><li>lastUpdated gt \"yyyy-MM-dd'T'HH:mm:ss.SSSZ\"</li></ul><br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li><li>REPORT_ADMIN</li><li>MOBILE_ADMIN</li></ul>",
             "type": "investigate",
             "identifier": "list_users",
             "read_only": true,
@@ -681,7 +682,7 @@
         {
             "action": "list user groups",
             "description": "Get the groups that the user is a member of",
-            "verbose": "Limit parameter is used to provide total number of user groups to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of groups by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>type</li><li>lastMembershipUpdated</li><li>id</li><li>lastUpdated</li></ul>.",
+            "verbose": "Limit parameter is used to provide total number of user groups to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of groups by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>type</li><li>lastMembershipUpdated</li><li>id</li><li>lastUpdated</li></ul><br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li><li>MOBILE_ADMIN</li></ul>",
             "type": "investigate",
             "identifier": "list_user_groups",
             "read_only": true,
@@ -946,6 +947,7 @@
             "description": "Add a group",
             "type": "generic",
             "identifier": "add_group",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li></ul>",
             "read_only": false,
             "parameters": {
                 "name": {
@@ -1137,6 +1139,7 @@
             "description": "Generate a one-time token that can be used to reset the user's password",
             "type": "correct",
             "identifier": "reset_password",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li></ul>",
             "read_only": false,
             "parameters": {
                 "user_id": {
@@ -1239,6 +1242,7 @@
             "description": "Set the password of a user without validating existing credentials",
             "type": "contain",
             "identifier": "set_password",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li></ul>",
             "read_only": false,
             "parameters": {
                 "new_password": {
@@ -1731,6 +1735,7 @@
             "description": "Disables the specified user",
             "type": "contain",
             "identifier": "disable_user",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li></ul>",
             "read_only": false,
             "undo": "enable user",
             "parameters": {
@@ -1808,6 +1813,7 @@
             "description": "Clears the specified user's sessions",
             "type": "contain",
             "identifier": "clear_user_sessions",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li>clear user sessions</ul>",
             "read_only": false,
             "parameters": {
                 "id": {
@@ -1884,6 +1890,7 @@
             "description": "Enables the specified user",
             "type": "correct",
             "identifier": "enable_user",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li></ul>",
             "read_only": false,
             "undo": "disable user",
             "parameters": {
@@ -1961,6 +1968,7 @@
             "description": "Get information about a user",
             "type": "investigate",
             "identifier": "get_user",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li></ul>",
             "read_only": true,
             "parameters": {
                 "user_id": {
@@ -2503,6 +2511,7 @@
             "description": "Get information about a group",
             "type": "investigate",
             "identifier": "get_group",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li></ul>",
             "read_only": true,
             "parameters": {
                 "group_id": {
@@ -2742,7 +2751,7 @@
         {
             "action": "list providers",
             "description": "List identity providers (IdPs) in your organization",
-            "verbose": "Limit parameter is used to provide total number of identity providers to be fetched from your organization. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of idps by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>.",
+            "verbose": "Limit parameter is used to provide total number of identity providers to be fetched from your organization. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of idps by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>.<br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>READ_ONLY_ADMIN</li></ul>",
             "type": "investigate",
             "identifier": "list_providers",
             "read_only": true,
@@ -3084,6 +3093,7 @@
             "description": "Lists all roles assigned to a user",
             "type": "investigate",
             "identifier": "list_roles",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>",
             "read_only": true,
             "parameters": {
                 "user_id": {
@@ -3387,6 +3397,7 @@
             "description": "Assign a role to a user",
             "type": "generic",
             "identifier": "assign_role",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>",
             "read_only": false,
             "parameters": {
                 "type": {
@@ -3399,6 +3410,9 @@
                         "APP_ADMIN",
                         "USER_ADMIN",
                         "MOBILE_ADMIN",
+                        "HELP_DESK_ADMIN",
+                        "GROUP_MEMBERSHIP_ADMIN",
+                        "REPORT_ADMIN",
                         "READ_ONLY_ADMIN"
                     ],
                     "required": true,
@@ -3542,6 +3556,7 @@
             "description": "Unassign a role to a user",
             "type": "generic",
             "identifier": "unassign_role",
+            "verbose": "One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>",
             "read_only": false,
             "parameters": {
                 "user_id": {
@@ -3635,5 +3650,37 @@
             },
             "versions": "EQ(*)"
         }
-    ]
+    ],
+    "pip_dependencies": {
+        "wheel": [
+            {
+                "module": "beautifulsoup4",
+                "input_file": "wheels/beautifulsoup4-4.9.1-py3-none-any.whl"
+            },
+            {
+                "module": "certifi",
+                "input_file": "wheels/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "soupsieve",
+                "input_file": "wheels/soupsieve-2.3-py3-none-any.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+            }
+        ]
+    }
 }
