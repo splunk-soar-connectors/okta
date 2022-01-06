@@ -3,7 +3,7 @@
     "product_version_regex": ".*",
     "description": "This app supports various identity management actions on Okta",
     "package_name": "phantom_okta",
-    "utctime_updated": "2022-01-04T18:41:51.000000Z",
+    "utctime_updated": "2022-01-06T05:15:14.000000Z",
     "product_vendor": "Okta",
     "logo": "logo_okta.svg",
     "logo_dark": "logo_okta_dark.svg",
@@ -13,7 +13,7 @@
     "min_phantom_version": "5.0.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
-    "app_version": "2.2.2",
+    "app_version": "2.2.3",
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
