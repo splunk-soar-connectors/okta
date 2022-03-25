@@ -636,6 +636,33 @@ class OktaConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS, OKTA_GET_GROUP_SUCC)
 
+    def _handle_get_user_groups(self, param):
+        """
+        This action is used to get all the groups associated with a user id
+        :param user_id: Okta user id to search for
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+
+        # make rest call
+        ret_val, response = self._make_rest_call(f'/users/{user_id}/groups', action_result)
+
+        if phantom.is_fail(ret_val):
+            action_result.set_status(phantom.APP_ERROR, response)
+            return action_result.get_status()
+
+        # Add the response into the data section
+        for item in response:
+            action_result.add_data(item)
+
+        summary = action_result.update_summary({})
+        summary['total_groups'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS, f"Retrived {user_id} groups")
+
     def _handle_add_group(self, param):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -910,6 +937,59 @@ class OktaConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully sent push notification")
 
+    def _handle_add_user_to_group(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        group_id = param['group_id']
+        user_id = param['user_id']
+
+        # make rest call
+        ret_val, response = self._make_rest_call(
+           f'/groups/{group_id}/users/{user_id}', action_result, method="put"
+        )
+
+        if phantom.is_fail(ret_val):
+            action_result.set_status(phantom.APP_ERROR, response)
+            return action_result.get_status()
+
+        # Add the response into the data section
+        action_result.add_data(response)
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary['user_id'] = user_id
+        summary['group_id'] = group_id
+
+        return action_result.set_status(phantom.APP_SUCCESS, f"Added {user_id} to {group_id}")
+
+    def _handle_remove_user_from_group(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+        group_id = param['group_id']
+
+        # make rest call
+        ret_val, response = self._make_rest_call(
+            f"/groups/{group_id}/users/{user_id}", action_result, method="delete"
+        )
+
+        if phantom.is_fail(ret_val):
+            action_result.set_status(phantom.APP_ERROR, response)
+            return action_result.get_status()
+
+        # Add the response into the data section
+        action_result.add_data(response)
+
+        # Add a dictionary that is made up of the most important values from data into the summary
+        summary = action_result.update_summary({})
+        summary['user_id'] = user_id
+        summary['group_id'] = group_id
+
+        return action_result.set_status(phantom.APP_SUCCESS, f"Removed {user_id} from {group_id}")
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -949,6 +1029,9 @@ class OktaConnector(BaseConnector):
         elif action_id == 'get_user':
             ret_val = self._handle_get_user(param)
 
+        elif action_id == 'get_user_groups':
+            ret_val = self._handle_get_user_groups(param)
+
         elif action_id == 'list_providers':
             ret_val = self._handle_list_providers(param)
 
@@ -966,6 +1049,12 @@ class OktaConnector(BaseConnector):
 
         elif action_id == 'clear_user_sessions':
             ret_val = self._handle_clear_user_sessions(param)
+
+        elif action_id == 'add_user_to_group':
+            ret_val = self._handle_add_user_to_group(param)
+
+        elif action_id == 'remove_user_from_group':
+            ret_val = self._handle_remove_user_from_group(param)
 
         return ret_val
 
