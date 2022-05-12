@@ -52,7 +52,7 @@ class OktaConnector(BaseConnector):
 
     def _process_empty_response(self, response, action_result):
 
-        if response.status_code == 200:
+        if 200 <= response.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, {})
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
@@ -944,24 +944,38 @@ class OktaConnector(BaseConnector):
         group_id = param['group_id']
         user_id = param['user_id']
 
-        # make rest call
+        # translate user_id to name:
         ret_val, response = self._make_rest_call(
-           f'/groups/{group_id}/users/{user_id}', action_result, method="put"
+           f'/users/{user_id}', action_result, method="get"
         )
-
         if phantom.is_fail(ret_val):
-            action_result.set_status(phantom.APP_ERROR, response)
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid user_id: {user_id}. {str(response)}')
+        user_name = response['profile']['login']
+
+        # translate group_id to name:
+        ret_val, response = self._make_rest_call(
+           f'/groups/{group_id}', action_result, method="get"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid group_id: {group_id}')
+        group_name = response['profile']['name']
+
+        # update group membership:
+        ret_val, response = self._make_rest_call(
+            f'/groups/{group_id}/users/{user_id}', action_result, method="put"
+        )
+        action_result.add_data(response)
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
         summary['user_id'] = user_id
+        summary['user_name'] = user_name
         summary['group_id'] = group_id
+        summary['group_name'] = group_name
 
-        return action_result.set_status(phantom.APP_SUCCESS, f"Added {user_id} to {group_id}")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Added user '{user_name}' ({user_id}) to group '{group_name}' ({group_id})")
 
     def _handle_remove_user_from_group(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -971,24 +985,38 @@ class OktaConnector(BaseConnector):
         user_id = param['user_id']
         group_id = param['group_id']
 
-        # make rest call
+        # translate user_id to name:
+        ret_val, response = self._make_rest_call(
+           f'/users/{user_id}', action_result, method="get"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid user_id: {user_id}')
+        user_name = response['profile']['login']
+
+        # translate group_id to name:
+        ret_val, response = self._make_rest_call(
+           f'/groups/{group_id}', action_result, method="get"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid group_id: {group_id}')
+        group_name = response['profile']['name']
+
+        # remove user from group
         ret_val, response = self._make_rest_call(
             f"/groups/{group_id}/users/{user_id}", action_result, method="delete"
         )
 
         if phantom.is_fail(ret_val):
-            action_result.set_status(phantom.APP_ERROR, response)
             return action_result.get_status()
 
-        # Add the response into the data section
         action_result.add_data(response)
-
-        # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
         summary['user_id'] = user_id
+        summary['user_name'] = user_name
         summary['group_id'] = group_id
+        summary['group_name'] = group_name
 
-        return action_result.set_status(phantom.APP_SUCCESS, f"Removed {user_id} from {group_id}")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Removed user '{user_name}' ({user_id}) from group'{group_name}' ({group_id})")
 
     def handle_action(self, param):
 

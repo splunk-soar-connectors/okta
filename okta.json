@@ -10,7 +10,7 @@
     "publisher": "Splunk",
     "name": "Okta",
     "license": "Copyright (c) 2018-2022 Splunk Inc.",
-    "min_phantom_version": "5.1.0",
+    "min_phantom_version": "5.2.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
     "app_version": "2.2.6",
@@ -3215,7 +3215,7 @@
                     "data_path": "action_result.data.*.profile.login",
                     "contains": [
                         "user name"
-                    ]
+                    ],
                     "example_values": [
                         "test@example.com"
                     ],
@@ -3665,6 +3665,7 @@
             "verbose": "Adds a user to a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type.\nApplication imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups.",
             "type": "generic",
             "read_only": false,
+            "undo": "remove user from group",
             "parameters": {
                 "group_id": {
                     "description": "id of the Group",
@@ -3703,22 +3704,28 @@
                 {
                     "data_path": "action_result.parameter.group_id",
                     "data_type": "string",
-                    "contains": [],
+                    "contains": [
+                        "okta group id"
+                    ],
                     "column_name": "group_id",
-                    "column_order": 0
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.parameter.user_id",
                     "data_type": "string",
-                    "contains": [],
+                    "contains": [
+                        "okta user id",
+                        "user name",
+                        "email"
+                    ],
                     "column_name": "user_id",
-                    "column_order": 1
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "status",
-                    "column_order": 2
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.message",
@@ -3731,6 +3738,38 @@
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.user_id",
+                    "data_type": "string",
+                    "contains": [
+                        "okta user id",
+                        "user name",
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "summary.user_name",
+                    "data_type": "string",
+                    "contains": [
+                        "user name",
+                        "email"
+                    ],
+                    "column_name": "user_name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "summary.group_id",
+                    "data_type": "string",
+                    "contains": [
+                        "okta group id"
+                    ]
+                },
+                {
+                    "data_path": "summary.group_name",
+                    "data_type": "string",
+                    "column_name": "group_name",
+                    "column_order": 1
                 }
             ],
             "render": {
@@ -3745,6 +3784,7 @@
             "verbose": "Removes a user from a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type. Application imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups.",
             "type": "generic",
             "read_only": false,
+            "undo": "add user to group",
             "parameters": {
                 "group_id": {
                     "description": "Group id",
@@ -3783,22 +3823,28 @@
                 {
                     "data_path": "action_result.parameter.group_id",
                     "data_type": "string",
-                    "contains": [],
+                    "contains": [
+                        "okta group id"
+                    ],
                     "column_name": "group_id",
-                    "column_order": 0
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.parameter.user_id",
                     "data_type": "string",
-                    "contains": [],
+                    "contains": [
+                        "okta user id",
+                        "user name",
+                        "email"
+                    ],                   
                     "column_name": "user_id",
-                    "column_order": 1
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "status",
-                    "column_order": 2
+                    "column_order": 4
                 },
                 {
                     "data_path": "action_result.message",
@@ -3811,264 +3857,38 @@
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
-                }
-            ],
-            "render": {
-                "type": "table"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "get user groups",
-            "identifier": "get_user_groups",
-            "description": "Fetches the groups of which the user is a member",
-            "verbose": "id, login, or login shortname (as long as it is unambiguous) of user",
-            "type": "investigate",
-            "read_only": true,
-            "parameters": {
-                "user_id": {
-                    "description": "User id",
+                },
+                {
+                    "data_path": "summary.user_id",
                     "data_type": "string",
-                    "required": true,
-                    "primary": true,
                     "contains": [
                         "okta user id",
-                        "email",
-                        "user name"
-                    ],
-                    "value_list": [],
-                    "default": "",
-                    "order": 0,
-                    "name": "user_id"
-                }
-            },
-            "output": [
+                        "user name",
+                        "email"
+                    ]
+                },
                 {
-                    "data_path": "action_result.parameter.user_id",
+                    "data_path": "summary.user_name",
                     "data_type": "string",
                     "contains": [
-                        "okta user id"
+                        "user name",
+                        "email"
                     ],
-                    "column_name": "user_id",
-                    "column_order": 0,
-                    "example_values": [
-                        "00u29h672f7aSA2gW5d7"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "column_name": "status",
-                    "column_order": 1,
-                    "example_values": [
-                        "success"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Retrived 00u29h672f7aSA2gW5d7 groups"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "contains": [
-                        "okta group id"
-                    ],
-                    "example_values": [
-                        "00gsejrjospUlF9Gq5d6"
-                    ],
-                    "column_name": "Group ID",
+                    "column_name": "user_name",
                     "column_order": 0
                 },
                 {
-                    "data_path": "action_result.data.*.type",
+                    "data_path": "summary.group_id",
                     "data_type": "string",
-                    "example_values": [
-                        "BUILT_IN"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*._links.apps.href",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/groups/00gsejrjospUlF9Gq5d6/apps"
-                    ],
                     "contains": [
-                        "url"
+                        "okta group id"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*._links.logo.*.href",
+                    "data_path": "summary.group_name",
                     "data_type": "string",
-                    "example_values": [
-                        "https://ok12static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebe44c4244fb796c235d86b47e3bb.png"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*._links.logo.*.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "medium"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*._links.logo.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "image/png"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*._links.users.href",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/groups/00gsejrjospUlF9Gq5d6/users"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.created",
-                    "data_type": "string",
-                    "example_values": [
-                        "2021-05-20T22:33:47.000Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.name",
-                    "data_type": "string",
-                    "example_values": [
-                        "Everyone"
-                    ],
-                    "column_name": "Name",
+                    "column_name": "group_name",
                     "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.profile.description",
-                    "data_type": "string",
-                    "example_values": [
-                        "All users in your organization"
-                    ],
-                    "column_name": "Description",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.data.*.lastUpdated",
-                    "data_type": "string",
-                    "example_values": [
-                        "2021-05-20T22:33:47.000Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.objectClass",
-                    "data_type": "string",
-                    "example_values": [
-                        "okta:windows_security_principal"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.lastMembershipUpdated",
-                    "data_type": "string",
-                    "example_values": [
-                        "2022-01-06T01:52:56.000Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*._links.source.href",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/apps/0oa29h3qo0ymMKmn85d7"
-                    ],
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.source.id",
-                    "data_type": "string",
-                    "example_values": [
-                        "0oa29h3qo0ymMKmn85d7"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.dn",
-                    "data_type": "string",
-                    "example_values": [
-                        "CN=Domain Users,CN=Users,DC=froth,DC=ly"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.groupType",
-                    "data_type": "string",
-                    "example_values": [
-                        "Security"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.objectSid",
-                    "data_type": "string",
-                    "example_values": [
-                        "S-1-5-21-2956641968-2323092808-3281432922-513"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.externalId",
-                    "data_type": "string",
-                    "example_values": [
-                        "6Yr3srndz0my87bFtYtJMQ=="
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.groupScope",
-                    "data_type": "string",
-                    "example_values": [
-                        "Global"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.samAccountName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Domain Users"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.profile.windowsDomainQualifiedName",
-                    "data_type": "string",
-                    "example_values": [
-                        "FROTH\\Domain Users"
-                    ],
-                    "contains": [
-                        "domain"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.total_groups",
-                    "data_type": "numeric",
-                    "example_values": [
-                        4
-                    ]
                 }
             ],
             "render": {
