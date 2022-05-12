@@ -964,11 +964,19 @@ class OktaConnector(BaseConnector):
         ret_val, response = self._make_rest_call(
             f'/groups/{group_id}/users/{user_id}', action_result, method="put"
         )
-        action_result.add_data(response)
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        action_result.add_data(response)
+        if not response:
+            action_result.add_data({
+                'user_id': user_id,
+                'user_name': user_name,
+                'group_id': group_id,
+                'group_name': group_name
+            })
+        else:
+            action_result.add_data(response)
+
         summary = action_result.update_summary({})
         summary['user_id'] = user_id
         summary['user_name'] = user_name
@@ -1008,15 +1016,22 @@ class OktaConnector(BaseConnector):
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
-
-        action_result.add_data(response)
+        if not response:
+            action_result.add_data({
+                'user_id': user_id,
+                'user_name': user_name,
+                'group_id': group_id,
+                'group_name': group_name
+            })
+        else:
+            action_result.add_data(response)
         summary = action_result.update_summary({})
         summary['user_id'] = user_id
         summary['user_name'] = user_name
         summary['group_id'] = group_id
         summary['group_name'] = group_name
 
-        return action_result.set_status(phantom.APP_SUCCESS, f"Removed user '{user_name}' ({user_id}) from group'{group_name}' ({group_id})")
+        return action_result.set_status(phantom.APP_SUCCESS, f"Removed user '{user_name}' ({user_id}) from group '{group_name}' ({group_id})")
 
     def handle_action(self, param):
 

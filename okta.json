@@ -3668,7 +3668,7 @@
             "undo": "remove user from group",
             "parameters": {
                 "group_id": {
-                    "description": "id of the Group",
+                    "description": "Group id",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
@@ -3683,14 +3683,12 @@
                     "param_name": "group_id"
                 },
                 "user_id": {
-                    "description": "id of a user",
+                    "description": "User id",
                     "data_type": "string",
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "okta user id",
-                        "user name",
-                        "email"
+                        "okta user id"
                     ],
                     "value_list": [],
                     "default": "",
@@ -3706,26 +3704,51 @@
                     "data_type": "string",
                     "contains": [
                         "okta group id"
-                    ],
-                    "column_name": "group_id",
-                    "column_order": 3
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.user_id",
                     "data_type": "string",
                     "contains": [
-                        "okta user id",
-                        "user name",
-                        "email"
-                    ],
-                    "column_name": "user_id",
-                    "column_order": 2
+                        "okta user id"
+                    ]
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "status",
                     "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.user_name",
+                    "data_type": "string",
+                    "contains": [
+                        "user name",
+                        "email"
+                    ],
+                    "column_name": "User Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.group_name",
+                    "data_type": "string",
+                    "column_name": "Group Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.user_id",
+                    "data_type": "string",
+                    "column_name": "User ID",
+                    "column_order": 2,
+                    "contains": [
+                        "okta user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.group_id",
+                    "data_type": "string",
+                    "column_name": "Group ID",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.message",
@@ -3743,9 +3766,7 @@
                     "data_path": "summary.user_id",
                     "data_type": "string",
                     "contains": [
-                        "okta user id",
-                        "user name",
-                        "email"
+                        "okta user id"
                     ]
                 },
                 {
@@ -3754,9 +3775,7 @@
                     "contains": [
                         "user name",
                         "email"
-                    ],
-                    "column_name": "user_name",
-                    "column_order": 0
+                    ]
                 },
                 {
                     "data_path": "summary.group_id",
@@ -3767,9 +3786,7 @@
                 },
                 {
                     "data_path": "summary.group_name",
-                    "data_type": "string",
-                    "column_name": "group_name",
-                    "column_order": 1
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -3807,9 +3824,7 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "okta user id",
-                        "user name",
-                        "email"
+                        "okta user id"
                     ],
                     "value_list": [],
                     "default": "",
@@ -3825,26 +3840,51 @@
                     "data_type": "string",
                     "contains": [
                         "okta group id"
-                    ],
-                    "column_name": "group_id",
-                    "column_order": 3
+                    ]
                 },
                 {
                     "data_path": "action_result.parameter.user_id",
                     "data_type": "string",
                     "contains": [
-                        "okta user id",
-                        "user name",
-                        "email"
-                    ],                   
-                    "column_name": "user_id",
-                    "column_order": 2
+                        "okta user id"
+                    ]
                 },
                 {
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "status",
                     "column_order": 4
+                },
+                {
+                    "data_path": "action_result.data.*.user_name",
+                    "data_type": "string",
+                    "contains": [
+                        "user name",
+                        "email"
+                    ],
+                    "column_name": "User Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.group_name",
+                    "data_type": "string",
+                    "column_name": "Group Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.user_id",
+                    "data_type": "string",
+                    "column_name": "User ID",
+                    "column_order": 2,
+                    "contains": [
+                        "okta user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.group_id",
+                    "data_type": "string",
+                    "column_name": "Group ID",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.message",
@@ -3862,9 +3902,7 @@
                     "data_path": "summary.user_id",
                     "data_type": "string",
                     "contains": [
-                        "okta user id",
-                        "user name",
-                        "email"
+                        "okta user id"
                     ]
                 },
                 {
@@ -3873,9 +3911,7 @@
                     "contains": [
                         "user name",
                         "email"
-                    ],
-                    "column_name": "user_name",
-                    "column_order": 0
+                    ]
                 },
                 {
                     "data_path": "summary.group_id",
@@ -3886,9 +3922,7 @@
                 },
                 {
                     "data_path": "summary.group_name",
-                    "data_type": "string",
-                    "column_name": "group_name",
-                    "column_order": 1
+                    "data_type": "string"
                 }
             ],
             "render": {
