@@ -9,7 +9,7 @@
     "logo_dark": "logo_okta_dark.svg",
     "publisher": "Splunk",
     "name": "Okta",
-    "license": "Copyright (c) 2018-2022 Splunk Inc.",
+    "license": "Copyright (c) 2018-2022 Splunk Inc",
     "min_phantom_version": "5.2.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
@@ -292,7 +292,7 @@
                 {
                     "data_path": "action_result.message",
                     "example_values": [
-                        "Successfully sent push notification."
+                        "Successfully sent push notification"
                     ],
                     "data_type": "string"
                 },
@@ -685,7 +685,7 @@
         },
         {
             "action": "list user groups",
-            "description": "Enumerates Groups in your organization with pagination. A subset of Groups can be returned that match a supported filter expression or query.",
+            "description": "Enumerates Groups in your organization with pagination. A subset of Groups can be returned that match a supported filter expression or query",
             "verbose": "Limit parameter is used to provide total number of user groups to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of groups by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>type</li><li>lastMembershipUpdated</li><li>id</li><li>lastUpdated</li></ul><br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li><li>MOBILE_ADMIN</li></ul>",
             "type": "investigate",
             "identifier": "list_user_groups",
@@ -1980,8 +1980,7 @@
                     "data_type": "string",
                     "required": true,
                     "contains": [
-                        "okta user id",
-                        "email"
+                        "okta user id"
                     ],
                     "primary": true,
                     "order": 0
@@ -3662,7 +3661,7 @@
             "action": "add user to group",
             "identifier": "add_user_to_group",
             "description": "Add a user to an Okta group",
-            "verbose": "Adds a user to a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type.\nApplication imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups.",
+            "verbose": "Adds a user to a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type.\nApplication imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups",
             "type": "generic",
             "read_only": false,
             "undo": "remove user from group",
@@ -3798,7 +3797,7 @@
             "action": "remove user from group",
             "identifier": "remove_user_from_group",
             "description": "Remove a user from a group",
-            "verbose": "Removes a user from a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type. Application imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups.",
+            "verbose": "Removes a user from a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type. Application imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups",
             "type": "generic",
             "read_only": false,
             "undo": "add user to group",
