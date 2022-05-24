@@ -937,7 +937,7 @@ class OktaConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully sent push notification")
 
-    def _handle_add_user_to_group(self, param):
+    def _handle_add_group_user(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -985,7 +985,7 @@ class OktaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, f"Added user '{user_name}' ({user_id}) to group '{group_name}' ({group_id})")
 
-    def _handle_remove_user_from_group(self, param):
+    def _handle_remove_group_user(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -1093,11 +1093,11 @@ class OktaConnector(BaseConnector):
         elif action_id == 'clear_user_sessions':
             ret_val = self._handle_clear_user_sessions(param)
 
-        elif action_id == 'add_user_to_group':
-            ret_val = self._handle_add_user_to_group(param)
+        elif action_id == 'add_group_user':
+            ret_val = self._handle_add_group_user(param)
 
-        elif action_id == 'remove_user_from_group':
-            ret_val = self._handle_remove_user_from_group(param)
+        elif action_id == 'remove_group_user':
+            ret_val = self._handle_remove_group_user(param)
 
         return ret_val
 
