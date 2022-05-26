@@ -822,13 +822,13 @@ class OktaConnector(BaseConnector):
             if 'Empty response and no information in the header' in message:
                 # Add the response into the data section
                 action_result.add_data({})
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_UNASSIGN_ROLE_SUCC)
+                return action_result.set_status(phantom.APP_ERROR, OKTA_UNASSIGN_ROLE_SUCC)
             if 'Not found' in message:
                 # Add the response into the data section
                 action_result.add_data({})
                 return action_result.set_status(phantom.APP_ERROR, OKTA_ALREADY_UNASSIGN_ROLE_ERR)
             return action_result.get_status()
-        return action_result.set_status(phantom.APP_ERROR)
+        return action_result.set_status(phantom.APP_SUCCESS, OKTA_UNASSIGN_ROLE_SUCC)
 
     def _handle_send_push_notification(self, param):
 
