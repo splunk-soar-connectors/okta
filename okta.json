@@ -4206,10 +4206,29 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.summary.total_groups",
+                    "data_type": "numeric",
+                    "example_value": 2
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
                         "Total groups: 3"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
                     ]
                 }
             ],
