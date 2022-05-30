@@ -70,3 +70,8 @@ ROLE_TYPE_VALUE_LIST = [
     "SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN",
     "HELP_DESK_ADMIN", "GROUP_MEMBERSHIP_ADMIN", "REPORT_ADMIN"]
 VALUE_LIST_VALIDATION_MSG = "Please provide valid input from {} in '{}' action parameter"
+
+OKTA_STATE_FILE_CORRUPT_ERR = (
+    "Error occurred while loading the state file due to its unexpected format. "
+    "Resetting the state file with the default format. Please try again."
+)

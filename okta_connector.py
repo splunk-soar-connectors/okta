@@ -661,7 +661,7 @@ class OktaConnector(BaseConnector):
         summary = action_result.update_summary({})
         summary['total_groups'] = action_result.get_data_size()
 
-        return action_result.set_status(phantom.APP_SUCCESS, f"Retrived {user_id} groups")
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_add_group(self, param):
 
@@ -1110,6 +1110,11 @@ class OktaConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
 
         self._state = self.load_state()
+        if not isinstance(self._state, dict):
+            self.debug_print("Resetting the state file with the default format")
+            self._state = {"app_version": self.get_app_json().get("app_version")}
+            return self.set_status(phantom.APP_ERROR, OKTA_STATE_FILE_CORRUPT_ERR)
+
         config = self.get_config()
 
         self._api_token = config[OKTA_API_TOKEN]
