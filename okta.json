@@ -9,7 +9,7 @@
     "logo_dark": "logo_okta_dark.svg",
     "publisher": "Splunk",
     "name": "Okta",
-    "license": "Copyright (c) 2018-2022 Splunk Inc",
+    "license": "Copyright (c) 2018-2022 Splunk Inc.",
     "min_phantom_version": "5.2.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
@@ -4199,7 +4199,7 @@
                         "BUILT_IN"
                     ],
                     "column_name": "Type",
-                    "column_order": 4
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.summary",
