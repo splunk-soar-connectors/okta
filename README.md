@@ -2,15 +2,15 @@
 # Okta
 
 Publisher: Splunk  
-Connector Version: 2\.2\.3  
+Connector Version: 2\.3\.0  
 Product Vendor: Okta  
 Product Name: Okta  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.0\.0  
+Minimum Product Version: 5\.2\.0  
 
 This app supports various identity management actions on Okta
 
-[comment]: # " File: readme.md"
+[comment]: # " File: README.md"
 [comment]: # "  Copyright (c) 2018-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "  Licensed under the Apache License, Version 2.0 (the 'License');"
@@ -142,6 +142,16 @@ The following tables show the Details of the roles and what they can perform.
 | REPORT_ADMIN                | Report Administrator                | View all reports and the System log.                                                                                                                                 |
 | MOBILE_ADMIN                | Mobile Administrator                | Perform actions related to mobile policies, sign-on policies, mobile devices, and Okta Mobile.                                                                       |
 
+Port Information
+
+The app uses HTTP/ HTTPS protocol for communicating with the Okta server. Below are the default
+ports used by Splunk SOAR.
+
+|         Service Name | Transport Protocol | Port |
+|----------------------|--------------------|------|
+|         http         | tcp                | 80   |
+|         https        | tcp                | 443  |
+
 
 ### Configuration Variables
 The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Okta asset in SOAR.
@@ -156,7 +166,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
 [send push notification](#action-send-push-notification) - Validate the user prompt with push notification  
 [list users](#action-list-users) - Get the list of users  
-[list user groups](#action-list-user-groups) - Get the groups that the user is a member of  
+[list user groups](#action-list-user-groups) - Enumerates Groups in your organization with pagination\. A subset of Groups can be returned that match a supported filter expression or query  
 [add group](#action-add-group) - Add a group  
 [reset password](#action-reset-password) - Generate a one\-time token that can be used to reset the user's password  
 [set password](#action-set-password) - Set the password of a user without validating existing credentials  
@@ -169,6 +179,9 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [list roles](#action-list-roles) - Lists all roles assigned to a user  
 [assign role](#action-assign-role) - Assign a role to a user  
 [unassign role](#action-unassign-role) - Unassign a role to a user  
+[add group user](#action-add-group-user) - Add a user to an Okta group  
+[remove group user](#action-remove-group-user) - Remove a user from a group  
+[get user groups](#action-get-user-groups) - List groups the user is part of  
 
 ## action: 'test connectivity'
 Validate the asset configuration for connectivity using supplied configuration
@@ -193,43 +206,62 @@ The action has not yet been implemented for the "sms" and the "token\:software\:
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**email** |  required  | Okta User id, email address, or username | string |  `okta user id`  `okta email address`  `okta username` 
+**email** |  required  | Okta User id, email address, or username | string |  `okta user id`  `okta email address`  `okta username`  `user name`  `email` 
 **factortype** |  required  | Okta Factor Type | string | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.parameter\.email | string |  `okta user id`  `okta email address`  `okta username` 
+action\_result\.status | string | 
+action\_result\.parameter\.email | string |  `okta user id`  `okta email address`  `okta username`  `user name`  `email` 
 action\_result\.parameter\.factortype | string | 
-action\_result\.data\.\*\.factorResult | string | 
-action\_result\.data\.\*\.id | string | 
-action\_result\.data\.\*\.\_links\.self\.href | string | 
-action\_result\.data\.\*\.\_links\.user\.href | string | 
+action\_result\.data\.\*\.\_links\.activate\.href | string | 
+action\_result\.data\.\*\.\_links\.cancel\.href | string | 
+action\_result\.data\.\*\.\_links\.factor\.href | string | 
+action\_result\.data\.\*\.\_links\.poll\.href | string | 
 action\_result\.data\.\*\.\_links\.resend\.\*\.href | string | 
 action\_result\.data\.\*\.\_links\.resend\.\*\.name | string | 
-action\_result\.data\.\*\.\_links\.activate\.href | string | 
-action\_result\.data\.\*\.status | string | 
-action\_result\.data\.\*\.created | string | 
-action\_result\.data\.\*\.profile\.phoneNumber | string | 
-action\_result\.data\.\*\.provider | string | 
-action\_result\.data\.\*\.factorType | string | 
-action\_result\.data\.\*\.vendorName | string | 
-action\_result\.data\.\*\.lastUpdated | string | 
+action\_result\.data\.\*\.\_links\.self\.href | string | 
+action\_result\.data\.\*\.\_links\.user\.href | string | 
 action\_result\.data\.\*\.\_links\.verify\.href | string | 
+action\_result\.data\.\*\.created | string | 
+action\_result\.data\.\*\.expiresAt | string | 
+action\_result\.data\.\*\.factorResult | string | 
+action\_result\.data\.\*\.factorType | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.lastUpdated | string | 
+action\_result\.data\.\*\.profile\.credentialId | string | 
+action\_result\.data\.\*\.profile\.deviceType | string | 
 action\_result\.data\.\*\.profile\.keys\.\*\.e | string | 
-action\_result\.data\.\*\.profile\.keys\.\*\.n | string | 
 action\_result\.data\.\*\.profile\.keys\.\*\.kid | string | 
 action\_result\.data\.\*\.profile\.keys\.\*\.kty | string | 
+action\_result\.data\.\*\.profile\.keys\.\*\.n | string | 
 action\_result\.data\.\*\.profile\.keys\.\*\.use | string | 
 action\_result\.data\.\*\.profile\.name | string | 
-action\_result\.data\.\*\.profile\.version | string | 
+action\_result\.data\.\*\.profile\.phoneNumber | string | 
 action\_result\.data\.\*\.profile\.platform | string | 
-action\_result\.data\.\*\.profile\.deviceType | string | 
-action\_result\.data\.\*\.profile\.credentialId | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
+action\_result\.data\.\*\.profile\.version | string | 
+action\_result\.data\.\*\.provider | string | 
+action\_result\.data\.\*\.status | string | 
+action\_result\.data\.\*\.vendorName | string | 
 action\_result\.summary | string | 
+action\_result\.summary\.result\.\_links\.cancel\.href | string | 
+action\_result\.summary\.result\.\_links\.factor\.href | string | 
+action\_result\.summary\.result\.\_links\.poll\.href | string | 
+action\_result\.summary\.result\.\_links\.verify\.href | string | 
+action\_result\.summary\.result\.expiresAt | string | 
 action\_result\.summary\.result\.factorResult | string | 
+action\_result\.summary\.result\.profile\.credentialId | string | 
+action\_result\.summary\.result\.profile\.deviceType | string | 
+action\_result\.summary\.result\.profile\.keys\.\*\.e | string | 
+action\_result\.summary\.result\.profile\.keys\.\*\.kid | string | 
+action\_result\.summary\.result\.profile\.keys\.\*\.kty | string | 
+action\_result\.summary\.result\.profile\.keys\.\*\.n | string | 
+action\_result\.summary\.result\.profile\.keys\.\*\.use | string | 
+action\_result\.summary\.result\.profile\.name | string | 
+action\_result\.summary\.result\.profile\.platform | string | 
+action\_result\.summary\.result\.profile\.version | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -252,6 +284,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.filter | string | 
 action\_result\.parameter\.limit | numeric | 
 action\_result\.parameter\.query | string | 
@@ -260,7 +293,10 @@ action\_result\.data\.\*\.\_links\.self\.href | string |  `url`
 action\_result\.data\.\*\.activated | string | 
 action\_result\.data\.\*\.created | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.credentials\.provider\.name | string | 
 action\_result\.data\.\*\.credentials\.provider\.type | string | 
@@ -275,29 +311,25 @@ action\_result\.data\.\*\.profile\.displayName | string |
 action\_result\.data\.\*\.profile\.email | string |  `email` 
 action\_result\.data\.\*\.profile\.firstName | string | 
 action\_result\.data\.\*\.profile\.lastName | string | 
-action\_result\.data\.\*\.profile\.login | string |  `email` 
+action\_result\.data\.\*\.profile\.login | string |  `user name` 
 action\_result\.data\.\*\.profile\.middleName | string | 
 action\_result\.data\.\*\.profile\.mobilePhone | string | 
 action\_result\.data\.\*\.profile\.nickName | string | 
+action\_result\.data\.\*\.profile\.primaryPhone | string | 
 action\_result\.data\.\*\.profile\.secondEmail | string |  `email` 
 action\_result\.data\.\*\.profile\.streetAddress | string | 
 action\_result\.data\.\*\.profile\.title | string | 
 action\_result\.data\.\*\.status | string | 
 action\_result\.data\.\*\.statusChanged | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.type\.id | string | 
-action\_result\.data\.\*\.profile\.primaryPhone | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
 action\_result\.summary\.num\_users | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
 ## action: 'list user groups'
-Get the groups that the user is a member of
+Enumerates Groups in your organization with pagination\. A subset of Groups can be returned that match a supported filter expression or query
 
 Type: **investigate**  
 Read only: **True**
@@ -314,6 +346,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.filter | string | 
 action\_result\.parameter\.limit | numeric | 
 action\_result\.parameter\.query | string | 
@@ -321,6 +354,7 @@ action\_result\.data\.\*\.\_links\.apps\.href | string |  `url`
 action\_result\.data\.\*\.\_links\.logo\.\*\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.logo\.\*\.name | string | 
 action\_result\.data\.\*\.\_links\.logo\.\*\.type | string | 
+action\_result\.data\.\*\.\_links\.source\.href | string | 
 action\_result\.data\.\*\.\_links\.users\.href | string |  `url` 
 action\_result\.data\.\*\.created | string | 
 action\_result\.data\.\*\.id | string |  `okta group id` 
@@ -328,21 +362,19 @@ action\_result\.data\.\*\.lastMembershipUpdated | string |
 action\_result\.data\.\*\.lastUpdated | string | 
 action\_result\.data\.\*\.objectClass | string | 
 action\_result\.data\.\*\.profile\.description | string | 
-action\_result\.data\.\*\.profile\.name | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.\_links\.source\.href | string | 
-action\_result\.data\.\*\.source\.id | string | 
 action\_result\.data\.\*\.profile\.dn | string | 
-action\_result\.data\.\*\.profile\.groupType | string | 
-action\_result\.data\.\*\.profile\.objectSid | string | 
 action\_result\.data\.\*\.profile\.externalId | string | 
 action\_result\.data\.\*\.profile\.groupScope | string | 
+action\_result\.data\.\*\.profile\.groupType | string | 
+action\_result\.data\.\*\.profile\.name | string | 
+action\_result\.data\.\*\.profile\.objectSid | string | 
 action\_result\.data\.\*\.profile\.samAccountName | string | 
 action\_result\.data\.\*\.profile\.windowsDomainQualifiedName | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
+action\_result\.data\.\*\.source\.id | string | 
+action\_result\.data\.\*\.type | string | 
 action\_result\.summary | string | 
 action\_result\.summary\.num\_groups | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -363,6 +395,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.description | string | 
 action\_result\.parameter\.name | string | 
 action\_result\.data\.\*\.\_links\.apps\.href | string |  `url` 
@@ -378,10 +411,9 @@ action\_result\.data\.\*\.objectClass | string |
 action\_result\.data\.\*\.profile\.description | string | 
 action\_result\.data\.\*\.profile\.name | string | 
 action\_result\.data\.\*\.type | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
 action\_result\.summary\.group\_id | string |  `okta group id` 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -402,12 +434,12 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.receive\_type | string | 
 action\_result\.parameter\.user\_id | string |  `okta user id` 
 action\_result\.data\.\*\.resetPasswordUrl | string |  `url` 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -428,8 +460,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.id | string |  `okta user id` 
 action\_result\.parameter\.new\_password | string | 
+action\_result\.data\.\*\.\_links\.activate\.href | string | 
+action\_result\.data\.\*\.\_links\.activate\.method | string | 
 action\_result\.data\.\*\.\_links\.changePassword\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.changePassword\.method | string | 
 action\_result\.data\.\*\.\_links\.changeRecoveryQuestion\.href | string |  `url` 
@@ -442,15 +477,20 @@ action\_result\.data\.\*\.\_links\.forgotPassword\.href | string |  `url`
 action\_result\.data\.\*\.\_links\.forgotPassword\.method | string | 
 action\_result\.data\.\*\.\_links\.resetPassword\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.resetPassword\.method | string | 
+action\_result\.data\.\*\.\_links\.schema\.href | string | 
 action\_result\.data\.\*\.\_links\.self\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.suspend\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.suspend\.method | string | 
+action\_result\.data\.\*\.\_links\.type\.href | string | 
 action\_result\.data\.\*\.\_links\.unsuspend\.href | string |  `url` 
+action\_result\.data\.\*\.\_links\.unsuspend\.href | numeric |  `url` 
 action\_result\.data\.\*\.\_links\.unsuspend\.method | string | 
 action\_result\.data\.\*\.activated | string | 
 action\_result\.data\.\*\.created | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.credentials\.provider\.name | string | 
 action\_result\.data\.\*\.credentials\.provider\.type | string | 
@@ -465,26 +505,18 @@ action\_result\.data\.\*\.profile\.displayName | string |
 action\_result\.data\.\*\.profile\.email | string |  `email` 
 action\_result\.data\.\*\.profile\.firstName | string | 
 action\_result\.data\.\*\.profile\.lastName | string | 
-action\_result\.data\.\*\.profile\.login | string |  `email` 
+action\_result\.data\.\*\.profile\.login | string |  `user name` 
 action\_result\.data\.\*\.profile\.middleName | string | 
 action\_result\.data\.\*\.profile\.mobilePhone | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
 action\_result\.data\.\*\.profile\.nickName | string | 
 action\_result\.data\.\*\.profile\.secondEmail | string |  `email` 
-action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.profile\.streetAddress | string | 
 action\_result\.data\.\*\.profile\.title | string | 
 action\_result\.data\.\*\.status | string | 
 action\_result\.data\.\*\.statusChanged | string | 
-action\_result\.data\.\*\.\_links\.unsuspend\.href | numeric |  `url` 
 action\_result\.data\.\*\.type\.id | string | 
-action\_result\.data\.\*\.\_links\.type\.href | string | 
-action\_result\.data\.\*\.\_links\.schema\.href | string | 
-action\_result\.data\.\*\.\_links\.activate\.href | string | 
-action\_result\.data\.\*\.\_links\.activate\.method | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -504,11 +536,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.id | string |  `okta user id` 
 action\_result\.data | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -528,11 +560,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.id | string |  `okta user id` 
 action\_result\.data | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -552,11 +584,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.id | string |  `okta user id` 
 action\_result\.data | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -576,8 +608,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.user\_id | string |  `okta user id` 
 action\_result\.data\.\*\.\_links\.activate\.href | string |  `url` 
+action\_result\.data\.\*\.\_links\.activate\.href | string |  `url` 
+action\_result\.data\.\*\.\_links\.activate\.method | string | 
 action\_result\.data\.\*\.\_links\.activate\.method | string | 
 action\_result\.data\.\*\.\_links\.changePassword\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.changePassword\.method | string | 
@@ -590,16 +625,27 @@ action\_result\.data\.\*\.\_links\.expirePassword\.method | string |
 action\_result\.data\.\*\.\_links\.forgotPassword\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.forgotPassword\.method | string | 
 action\_result\.data\.\*\.\_links\.reactivate\.href | string |  `url` 
+action\_result\.data\.\*\.\_links\.reactivate\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.reactivate\.method | string | 
+action\_result\.data\.\*\.\_links\.reactivate\.method | string | 
+action\_result\.data\.\*\.\_links\.resetFactors\.href | string | 
+action\_result\.data\.\*\.\_links\.resetFactors\.method | string | 
 action\_result\.data\.\*\.\_links\.resetPassword\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.resetPassword\.method | string | 
+action\_result\.data\.\*\.\_links\.schema\.href | string | 
 action\_result\.data\.\*\.\_links\.self\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.suspend\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.suspend\.method | string | 
+action\_result\.data\.\*\.\_links\.type\.href | string | 
+action\_result\.data\.\*\.\_links\.unsuspend\.href | string | 
+action\_result\.data\.\*\.\_links\.unsuspend\.method | string | 
 action\_result\.data\.\*\.activated | string | 
 action\_result\.data\.\*\.created | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
 action\_result\.data\.\*\.credentials\.provider\.name | string | 
 action\_result\.data\.\*\.credentials\.provider\.type | string | 
@@ -614,7 +660,7 @@ action\_result\.data\.\*\.profile\.displayName | string |
 action\_result\.data\.\*\.profile\.email | string |  `email` 
 action\_result\.data\.\*\.profile\.firstName | string | 
 action\_result\.data\.\*\.profile\.lastName | string | 
-action\_result\.data\.\*\.profile\.login | string |  `email` 
+action\_result\.data\.\*\.profile\.login | string |  `user name` 
 action\_result\.data\.\*\.profile\.middleName | string | 
 action\_result\.data\.\*\.profile\.mobilePhone | string | 
 action\_result\.data\.\*\.profile\.nickName | string | 
@@ -623,23 +669,9 @@ action\_result\.data\.\*\.profile\.streetAddress | string |
 action\_result\.data\.\*\.profile\.title | string | 
 action\_result\.data\.\*\.status | string | 
 action\_result\.data\.\*\.statusChanged | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.value | string |  `email` 
-action\_result\.data\.\*\.\_links\.reactivate\.href | string |  `url` 
-action\_result\.data\.\*\.\_links\.reactivate\.method | string | 
-action\_result\.data\.\*\.\_links\.activate\.href | string |  `url` 
-action\_result\.data\.\*\.\_links\.activate\.method | string | 
 action\_result\.data\.\*\.type\.id | string | 
-action\_result\.data\.\*\.\_links\.type\.href | string | 
-action\_result\.data\.\*\.\_links\.schema\.href | string | 
-action\_result\.data\.\*\.\_links\.resetFactors\.href | string | 
-action\_result\.data\.\*\.\_links\.resetFactors\.method | string | 
-action\_result\.data\.\*\.\_links\.unsuspend\.href | string | 
-action\_result\.data\.\*\.\_links\.unsuspend\.method | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -659,11 +691,13 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.group\_id | string |  `okta group id` 
 action\_result\.data\.\*\.\_links\.apps\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.logo\.\*\.href | string |  `url` 
 action\_result\.data\.\*\.\_links\.logo\.\*\.name | string | 
 action\_result\.data\.\*\.\_links\.logo\.\*\.type | string | 
+action\_result\.data\.\*\.\_links\.source\.href | string | 
 action\_result\.data\.\*\.\_links\.users\.href | string |  `url` 
 action\_result\.data\.\*\.created | string | 
 action\_result\.data\.\*\.id | string |  `okta group id` 
@@ -671,20 +705,18 @@ action\_result\.data\.\*\.lastMembershipUpdated | string |
 action\_result\.data\.\*\.lastUpdated | string | 
 action\_result\.data\.\*\.objectClass | string | 
 action\_result\.data\.\*\.profile\.description | string | 
-action\_result\.data\.\*\.profile\.name | string | 
-action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.\_links\.source\.href | string | 
-action\_result\.data\.\*\.source\.id | string | 
 action\_result\.data\.\*\.profile\.dn | string | 
-action\_result\.data\.\*\.profile\.groupType | string | 
-action\_result\.data\.\*\.profile\.objectSid | string | 
 action\_result\.data\.\*\.profile\.externalId | string | 
 action\_result\.data\.\*\.profile\.groupScope | string | 
+action\_result\.data\.\*\.profile\.groupType | string | 
+action\_result\.data\.\*\.profile\.name | string | 
+action\_result\.data\.\*\.profile\.objectSid | string | 
 action\_result\.data\.\*\.profile\.samAccountName | string | 
 action\_result\.data\.\*\.profile\.windowsDomainQualifiedName | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
+action\_result\.data\.\*\.source\.id | string | 
+action\_result\.data\.\*\.type | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -706,6 +738,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.limit | numeric | 
 action\_result\.parameter\.query | string | 
 action\_result\.parameter\.type | string | 
@@ -741,10 +774,9 @@ action\_result\.data\.\*\.protocol\.scopes | string |  `url`
 action\_result\.data\.\*\.protocol\.type | string | 
 action\_result\.data\.\*\.status | string | 
 action\_result\.data\.\*\.type | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
 action\_result\.summary\.num\_idps | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -764,45 +796,45 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.user\_id | string |  `okta user id` 
-action\_result\.data\.\*\.created | string | 
-action\_result\.data\.\*\.id | string |  `okta role id` 
-action\_result\.data\.\*\.label | string | 
-action\_result\.data\.\*\.lastUpdated | string | 
-action\_result\.data\.\*\.status | string | 
-action\_result\.data\.\*\.type | string | 
 action\_result\.data\.\*\.\_links\.assignee\.href | string | 
-action\_result\.data\.\*\.assignmentType | string | 
-action\_result\.data\.\*\.type\.id | string | 
 action\_result\.data\.\*\.\_links\.self\.href | string | 
-action\_result\.data\.\*\.profile\.email | string | 
-action\_result\.data\.\*\.profile\.login | string | 
-action\_result\.data\.\*\.profile\.lastName | string | 
-action\_result\.data\.\*\.profile\.firstName | string | 
-action\_result\.data\.\*\.profile\.mobilePhone | string | 
-action\_result\.data\.\*\.profile\.secondEmail | string | 
 action\_result\.data\.\*\.activated | string | 
-action\_result\.data\.\*\.lastLogin | string | 
+action\_result\.data\.\*\.assignmentType | string | 
+action\_result\.data\.\*\.created | string | 
+action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.type | string | 
 action\_result\.data\.\*\.credentials\.emails\.\*\.value | string | 
-action\_result\.data\.\*\.credentials\.emails\.\*\.status | string | 
 action\_result\.data\.\*\.credentials\.provider\.name | string | 
 action\_result\.data\.\*\.credentials\.provider\.type | string | 
-action\_result\.data\.\*\.statusChanged | string | 
+action\_result\.data\.\*\.credentials\.recovery\_question\.question | string | 
+action\_result\.data\.\*\.id | string |  `okta role id` 
+action\_result\.data\.\*\.label | string | 
+action\_result\.data\.\*\.lastLogin | string | 
+action\_result\.data\.\*\.lastUpdated | string | 
 action\_result\.data\.\*\.passwordChanged | string | 
 action\_result\.data\.\*\.profile\.city | string | 
-action\_result\.data\.\*\.profile\.title | string | 
-action\_result\.data\.\*\.profile\.nickName | string | 
 action\_result\.data\.\*\.profile\.department | string | 
-action\_result\.data\.\*\.profile\.middleName | string | 
 action\_result\.data\.\*\.profile\.displayName | string | 
-action\_result\.data\.\*\.profile\.streetAddress | string | 
-action\_result\.data\.\*\.credentials\.recovery\_question\.question | string | 
+action\_result\.data\.\*\.profile\.email | string | 
+action\_result\.data\.\*\.profile\.firstName | string | 
+action\_result\.data\.\*\.profile\.lastName | string | 
+action\_result\.data\.\*\.profile\.login | string |  `user name` 
+action\_result\.data\.\*\.profile\.middleName | string | 
+action\_result\.data\.\*\.profile\.mobilePhone | string | 
+action\_result\.data\.\*\.profile\.nickName | string | 
 action\_result\.data\.\*\.profile\.primaryPhone | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
+action\_result\.data\.\*\.profile\.secondEmail | string | 
+action\_result\.data\.\*\.profile\.streetAddress | string | 
+action\_result\.data\.\*\.profile\.title | string | 
+action\_result\.data\.\*\.status | string | 
+action\_result\.data\.\*\.statusChanged | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.data\.\*\.type\.id | string | 
 action\_result\.summary | string | 
 action\_result\.summary\.num\_roles | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -823,19 +855,19 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.type | string | 
 action\_result\.parameter\.user\_id | string |  `okta user id` 
+action\_result\.data\.\*\.\_links\.assignee\.href | string | 
+action\_result\.data\.\*\.assignmentType | string | 
 action\_result\.data\.\*\.created | string | 
 action\_result\.data\.\*\.id | string |  `okta role id` 
 action\_result\.data\.\*\.label | string | 
 action\_result\.data\.\*\.lastUpdated | string | 
 action\_result\.data\.\*\.status | string | 
 action\_result\.data\.\*\.type | string | 
-action\_result\.data\.\*\.\_links\.assignee\.href | string | 
-action\_result\.data\.\*\.assignmentType | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric |   
 
@@ -856,11 +888,110 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
+action\_result\.status | string | 
 action\_result\.parameter\.role\_id | string |  `okta role id` 
 action\_result\.parameter\.user\_id | string |  `okta user id` 
 action\_result\.data | string | 
-action\_result\.status | string | 
-action\_result\.message | string | 
 action\_result\.summary | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'add group user'
+Add a user to an Okta group
+
+Type: **generic**  
+Read only: **False**
+
+Adds a user to a group of OKTA\_GROUP type\. You can modify only memberships for groups of OKTA\_GROUP type\.
+Application imports are responsible for managing group memberships for groups of APP\_GROUP type such as Active Directory groups\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**group\_id** |  required  | Group id | string |  `okta group id` 
+**user\_id** |  required  | User id | string |  `okta user id` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.group\_id | string |  `okta group id` 
+action\_result\.parameter\.user\_id | string |  `okta user id` 
+action\_result\.data\.\*\.group\_id | string |  `okta group id` 
+action\_result\.data\.\*\.group\_name | string | 
+action\_result\.data\.\*\.user\_id | string |  `okta user id` 
+action\_result\.data\.\*\.user\_name | string |  `user name`  `email` 
+action\_result\.summary\.group\_id | string | 
+action\_result\.summary\.group\_name | string | 
+action\_result\.summary\.user\_id | string | 
+action\_result\.summary\.user\_name | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'remove group user'
+Remove a user from a group
+
+Type: **generic**  
+Read only: **False**
+
+Removes a user from a group of OKTA\_GROUP type\. You can modify only memberships for groups of OKTA\_GROUP type\. Application imports are responsible for managing group memberships for groups of APP\_GROUP type such as Active Directory groups\.
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**group\_id** |  required  | Group id | string |  `okta group id` 
+**user\_id** |  required  | User id | string |  `okta user id` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.group\_id | string |  `okta group id` 
+action\_result\.parameter\.user\_id | string |  `okta user id` 
+action\_result\.data\.\*\.group\_id | string |  `okta group id` 
+action\_result\.data\.\*\.group\_name | string | 
+action\_result\.data\.\*\.user\_id | string |  `okta user id` 
+action\_result\.data\.\*\.user\_name | string |  `user name`  `email` 
+action\_result\.summary\.group\_id | string | 
+action\_result\.summary\.group\_name | string | 
+action\_result\.summary\.user\_id | string | 
+action\_result\.summary\.user\_name | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'get user groups'
+List groups the user is part of
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**user\_id** |  required  | User id | string |  `okta user id` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.user\_id | string |  `okta user id` 
+action\_result\.data\.\*\.\_links\.apps\.href | string | 
+action\_result\.data\.\*\.\_links\.logo\.\*\.href | string | 
+action\_result\.data\.\*\.\_links\.logo\.\*\.name | string | 
+action\_result\.data\.\*\.\_links\.logo\.\*\.type | string | 
+action\_result\.data\.\*\.\_links\.users\.href | string | 
+action\_result\.data\.\*\.created | string | 
+action\_result\.data\.\*\.id | string |  `okta group id` 
+action\_result\.data\.\*\.lastMembershipUpdated | string | 
+action\_result\.data\.\*\.lastUpdated | string | 
+action\_result\.data\.\*\.profile\.description | string | 
+action\_result\.data\.\*\.profile\.name | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.summary | string | 
+action\_result\.summary\.total\_groups | numeric | 
+action\_result\.message | string | 
 summary\.total\_objects | numeric | 
 summary\.total\_objects\_successful | numeric | 
