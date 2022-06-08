@@ -3,21 +3,21 @@
     "product_version_regex": ".*",
     "description": "This app supports various identity management actions on Okta",
     "package_name": "phantom_okta",
-    "utctime_updated": "2022-01-06T05:15:14.000000Z",
+    "utctime_updated": "2022-01-12T18:10:20.000000Z",
     "product_vendor": "Okta",
     "logo": "logo_okta.svg",
     "logo_dark": "logo_okta_dark.svg",
     "publisher": "Splunk",
     "name": "Okta",
     "license": "Copyright (c) 2018-2022 Splunk Inc.",
-    "min_phantom_version": "5.0.0",
+    "min_phantom_version": "5.2.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
-    "app_version": "2.2.3",
+    "app_version": "2.3.0",
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud, Version 2021.11.2"
+        "Cloud, Version 2022.05.3 C"
     ],
     "type": "identity management",
     "main_module": "okta_connector.py",
@@ -67,7 +67,9 @@
                     "contains": [
                         "okta user id",
                         "okta email address",
-                        "okta username"
+                        "okta username",
+                        "user name",
+                        "email"
                     ],
                     "primary": true,
                     "order": 0
@@ -87,6 +89,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.email",
                     "example_values": [
                         "00uby4va2hynIj0mS0h7",
@@ -95,7 +105,9 @@
                     "contains": [
                         "okta user id",
                         "okta email address",
-                        "okta username"
+                        "okta username",
+                        "user name",
+                        "email"
                     ],
                     "data_type": "string",
                     "column_order": 0,
@@ -106,16 +118,44 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.factorResult",
+                    "data_path": "action_result.data.*._links.activate.href",
                     "example_values": [
-                        "SUCCESS"
+                        "https://your-org.okta.com/api/v1/users/00uw82w5q56RZvUYK0h7/factors/mblwbi82gd6xSc4Cv0h7/lifecycle/activate"
                     ],
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.data.*._links.cancel.href",
+                    "data_type": "string",
                     "example_values": [
-                        "mblwbi82gd6xSc4Cv0h7"
+                        "https://test.okta.com/api/v1/users/00uwd6q3pq9glsd4y0h7/factors/opfxrtgfpsdvlnBMb10h7/transactions/v2qwt.OkKjplesRECb9iDlchH6eg"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.factor.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.okta.com/api/v1/users/00plrdygpq950Wt4y0h7/factors/opfx5ppoleDlnBMb10h7"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.poll.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.okta.com/api/v1/users/00uwd6wesd950Wt4y0h7/factors/opfx5wiuhyDlnBMb10h7/transactions/v2mst.OkKjcB4cRwsbniDlchH6eg"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.resend.*.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00uw82w5q56RZvUYK0h7/factors/mblwbi82gd6xSc4Cv0h7/resend"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.resend.*.name",
+                    "example_values": [
+                        "sms"
                     ],
                     "data_type": "string"
                 },
@@ -134,30 +174,9 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*._links.resend.*.href",
+                    "data_path": "action_result.data.*._links.verify.href",
                     "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uw82w5q56RZvUYK0h7/factors/mblwbi82gd6xSc4Cv0h7/resend"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.resend.*.name",
-                    "example_values": [
-                        "sms"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.activate.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uw82w5q56RZvUYK0h7/factors/mblwbi82gd6xSc4Cv0h7/lifecycle/activate"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.status",
-                    "example_values": [
-                        "PENDING_ACTIVATION"
+                        "https://your-org.okta.com/api/v1/users/00uw82w5q56RZvUYK0h7/factors/opfwbi0w6kZD0l8Fn0h7/verify"
                     ],
                     "data_type": "string"
                 },
@@ -169,13 +188,16 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.phoneNumber",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.expiresAt",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-05-25T14:15:27.000Z"
+                    ]
                 },
                 {
-                    "data_path": "action_result.data.*.provider",
+                    "data_path": "action_result.data.*.factorResult",
                     "example_values": [
-                        "OKTA"
+                        "SUCCESS"
                     ],
                     "data_type": "string"
                 },
@@ -187,9 +209,9 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.vendorName",
+                    "data_path": "action_result.data.*.id",
                     "example_values": [
-                        "OKTA"
+                        "mblwbi82gd6xSc4Cv0h7"
                     ],
                     "data_type": "string"
                 },
@@ -201,9 +223,16 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*._links.verify.href",
+                    "data_path": "action_result.data.*.profile.credentialId",
                     "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uw82w5q56RZvUYK0h7/factors/opfwbi0w6kZD0l8Fn0h7/verify"
+                        "test@example.com"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.deviceType",
+                    "example_values": [
+                        "SmartPhone_Android"
                     ],
                     "data_type": "string"
                 },
@@ -211,13 +240,6 @@
                     "data_path": "action_result.data.*.profile.keys.*.e",
                     "example_values": [
                         "AQAB"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.keys.*.n",
-                    "example_values": [
-                        "7iO7JaNuKfrqZI8fkWfwpeKfSMgJQ1iX2N-jsA1yFqV6lhyThmwus5BRTyVGmAYrKH9vnQTTTT9R1viHO5yJ5cBZS1fFmiQJ-VK9MpqiKKps6ozvYu1Xd2v9w1mdqljqFndvwoK7kGgvAP5BPAkEbVnS-ponoCPy9d5itHmcRKdN91l86WpIQ8X8R-BjPBFMZpt69MnzwzBBW6z3Y98GTwgb55qpzNDuMN4YU_KorvRhcFlUJ5chMU8Pe3nrR0UN6L9cTc89f1oULldvEF-OOmuEovm9smOYnAKH_Ugi7Aple7HpoKHpYEEp8mbfS5QFzfhkBwhE4fUQJ4RUgCJ5JQ"
                     ],
                     "data_type": "string"
                 },
@@ -236,6 +258,13 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.profile.keys.*.n",
+                    "example_values": [
+                        "7iO7JaNuKfrqZI8fkWfwpeKfSMgJQ1iX2N-jsA1yFqV6lhyThmwus5BRTyVGmAYrKH9vnQTTTT9R1viHO5yJ5cBZS1fFmiQJ-VK9MpqiKKps6ozvYu1Xd2v9w1mdqljqFndvwoK7kGgvAP5BPAkEbVnS-ponoCPy9d5itHmcRKdN91l86WpIQ8X8R-BjPBFMZpt69MnzwzBBW6z3Y98GTwgb55qpzNDuMN4YU_KorvRhcFlUJ5chMU8Pe3nrR0UN6L9cTc89f1oULldvEF-OOmuEovm9smOYnAKH_Ugi7Aple7HpoKHpYEEp8mbfS5QFzfhkBwhE4fUQJ4RUgCJ5JQ"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.profile.keys.*.use",
                     "example_values": [
                         "sig"
@@ -250,10 +279,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.version",
-                    "example_values": [
-                        "28"
-                    ],
+                    "data_path": "action_result.data.*.profile.phoneNumber",
                     "data_type": "string"
                 },
                 {
@@ -264,37 +290,71 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.deviceType",
+                    "data_path": "action_result.data.*.profile.version",
                     "example_values": [
-                        "SmartPhone_Android"
+                        "28"
                     ],
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.credentialId",
+                    "data_path": "action_result.data.*.provider",
                     "example_values": [
-                        "test@example.com"
+                        "OKTA"
                     ],
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.status",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "PENDING_ACTIVATION"
                     ],
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.vendorName",
                     "example_values": [
-                        "Successfully sent push notification."
+                        "OKTA"
                     ],
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.result._links.cancel.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.okta.com/api/v1/users/00uwwww3pq950Wt4y0h7/factors/opfwwwixcyDlnBMb10h7/transactions/v2mtt.OkKjcwwwwECb9iDlchH6eg"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result._links.factor.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.okta.com/api/v1/users/00plrdygpq950Wt4y0h7/factors/opfx5ppoleDlnBMb10h7"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result._links.poll.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://dev-567809.oktapreview.com/api/v1/users/00uwwww3pq950Wt4y0h7/factors/opfx5piwwwDlnBMb10h7/transactions/vert.OkKjcB4cRECb9egrddeg"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result._links.verify.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.okta.com/api/v1/users/00plrdygpq950Wt4y0h7/factors/opfx5ppoleDlnBMb10h7/verify"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.expiresAt",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-05-25T14:15:27.000Z"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary.result.factorResult",
@@ -307,6 +367,83 @@
                     "data_type": "string",
                     "column_order": 1,
                     "column_name": "Result"
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.credentialId",
+                    "data_type": "string",
+                    "example_values": [
+                        "test@example.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.deviceType",
+                    "data_type": "string",
+                    "example_values": [
+                        "SmartPhone_Android"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.keys.*.e",
+                    "data_type": "string",
+                    "example_values": [
+                        "AQAB"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.keys.*.kid",
+                    "data_type": "string",
+                    "example_values": [
+                        "default"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.keys.*.kty",
+                    "data_type": "string",
+                    "example_values": [
+                        "RSA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.keys.*.n",
+                    "data_type": "string",
+                    "example_values": [
+                        "sjBjRC1kl3CKBaKfvlu4i1jkhgfjyfgjhbkjbjkygkjhbkjnkuguyfvbFqGWxEGMvq7wyanETL4Q6JyhQ6VlYoaTXenN2cuER4hbxYgLCyOcDOvuPBNa3nVFwfMY_gGIwAfvMP0s7Ige-ZsFZ4qkoOK-OVTk4wEuFEwYOlXVjdc6TSv3AsC0Vry-MWg2tXNS-c3yNTe5GI2OR8L_jM7y4csTkTOKx4fQSnsq6A9zEfIs1eqw8xDbUbzdGtwvi2BB_QtWqPfMXsex3crW-K-GYMrw7teCGVjf-JwN3r7Bxle4yn9VSFnWlzwgymukugR0ekw_dNpL0IdIPw"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.keys.*.use",
+                    "data_type": "string",
+                    "example_values": [
+                        "sig"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "AC2001"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.platform",
+                    "data_type": "string",
+                    "example_values": [
+                        "ANDROID"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.result.profile.version",
+                    "data_type": "string",
+                    "example_values": [
+                        "29"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "example_values": [
+                        "Successfully sent push notification"
+                    ],
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -358,6 +495,14 @@
                 }
             },
             "output": [
+                {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
                 {
                     "data_path": "action_result.parameter.filter",
                     "example_values": [
@@ -416,6 +561,20 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.credentials.emails.*.status",
+                    "example_values": [
+                        "VERIFIED"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.type",
+                    "example_values": [
+                        "PRIMARY"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.credentials.emails.*.type",
                     "example_values": [
                         "PRIMARY"
@@ -427,6 +586,16 @@
                         "email"
                     ],
                     "data_path": "action_result.data.*.credentials.emails.*.value",
+                    "example_values": [
+                        "test@splunk.com"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.value",
+                    "contains": [
+                        "email"
+                    ],
                     "example_values": [
                         "test@splunk.com"
                     ],
@@ -532,7 +701,7 @@
                 {
                     "data_path": "action_result.data.*.profile.login",
                     "contains": [
-                        "email"
+                        "user name"
                     ],
                     "example_values": [
                         "test@test.com"
@@ -552,6 +721,10 @@
                 },
                 {
                     "data_path": "action_result.data.*.profile.nickName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.primaryPhone",
                     "data_type": "string"
                 },
                 {
@@ -594,52 +767,9 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.credentials.emails.*.status",
-                    "example_values": [
-                        "VERIFIED"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.emails.*.type",
-                    "example_values": [
-                        "PRIMARY"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.emails.*.value",
-                    "contains": [
-                        "email"
-                    ],
-                    "example_values": [
-                        "test@splunk.com"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.type.id",
                     "example_values": [
                         "otyaa8hod6wG1QvhR0h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.primaryPhone",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "example_values": [
-                        "Num users: 4"
                     ],
                     "data_type": "string"
                 },
@@ -654,6 +784,13 @@
                         4
                     ],
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "example_values": [
+                        "Num users: 4"
+                    ],
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -681,7 +818,7 @@
         },
         {
             "action": "list user groups",
-            "description": "Get the groups that the user is a member of",
+            "description": "Enumerates Groups in your organization with pagination. A subset of Groups can be returned that match a supported filter expression or query",
             "verbose": "Limit parameter is used to provide total number of user groups to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of groups by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>type</li><li>lastMembershipUpdated</li><li>id</li><li>lastUpdated</li></ul><br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li><li>MOBILE_ADMIN</li></ul>",
             "type": "investigate",
             "identifier": "list_user_groups",
@@ -704,6 +841,14 @@
                 }
             },
             "output": [
+                {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
                 {
                     "data_path": "action_result.parameter.filter",
                     "example_values": [
@@ -761,6 +906,13 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*._links.source.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/apps/0oambdtud0Skc25180h7"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*._links.users.href",
                     "contains": [
                         "url"
@@ -816,51 +968,9 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.name",
-                    "example_values": [
-                        "Everyone"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.type",
-                    "example_values": [
-                        "BUILT_IN"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.source.href",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/apps/0oambdtud0Skc25180h7"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.source.id",
-                    "example_values": [
-                        "0oambdtud0Skc25180h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.profile.dn",
                     "example_values": [
                         "CN=test,CN=Users,DC=corp,DC=contoso,DC=com"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.groupType",
-                    "example_values": [
-                        "Distribution"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.objectSid",
-                    "example_values": [
-                        "S-1-5-21-3790544232-372029393-2474287633-1631"
                     ],
                     "data_type": "string"
                 },
@@ -879,6 +989,27 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.profile.groupType",
+                    "example_values": [
+                        "Distribution"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.name",
+                    "example_values": [
+                        "Everyone"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.objectSid",
+                    "example_values": [
+                        "S-1-5-21-3790544232-372029393-2474287633-1631"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.profile.samAccountName",
                     "example_values": [
                         "test"
@@ -893,17 +1024,16 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.source.id",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "0oambdtud0Skc25180h7"
                     ],
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.type",
                     "example_values": [
-                        "Num groups: 4"
+                        "BUILT_IN"
                     ],
                     "data_type": "string"
                 },
@@ -917,6 +1047,13 @@
                         4
                     ],
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "example_values": [
+                        "Num groups: 4"
+                    ],
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -964,6 +1101,14 @@
                 }
             },
             "output": [
+                {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
                 {
                     "data_path": "action_result.parameter.description",
                     "example_values": [
@@ -1082,21 +1227,6 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "example_values": [
-                        "Group id: 00gesvtfjhpW2IyC00h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -1107,6 +1237,13 @@
                     ],
                     "example_values": [
                         "00gesvtfjhpW2IyC00h7"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "example_values": [
+                        "Group id: 00gesvtfjhpW2IyC00h7"
                     ],
                     "data_type": "string"
                 },
@@ -1166,6 +1303,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.receive_type",
                     "data_type": "string",
                     "example_values": [
@@ -1199,11 +1344,7 @@
                     "column_name": "Reset URL"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -1211,10 +1352,6 @@
                     "example_values": [
                         "Successfully created one-time token for user to reset password"
                     ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -1264,6 +1401,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.id",
                     "contains": [
                         "okta user id"
@@ -1277,6 +1422,20 @@
                     "data_path": "action_result.parameter.new_password",
                     "example_values": [
                         "newPassword"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.activate.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7/lifecycle/activate"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.activate.method",
+                    "example_values": [
+                        "POST"
                     ],
                     "data_type": "string"
                 },
@@ -1383,6 +1542,13 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*._links.schema.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/meta/schemas/user/oscaa8hod6wG1QvhR0h7"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*._links.self.href",
                     "contains": [
                         "url"
@@ -1410,6 +1576,13 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*._links.type.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/meta/types/user/otyaa8hod6wG1QvhR0h7"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "contains": [
                         "url"
                     ],
@@ -1418,6 +1591,16 @@
                         "https://your-org.okta.com/api/v1/users/00ugdwq3wbdAwsSQA0h7/lifecycle/unsuspend"
                     ],
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.unsuspend.href",
+                    "contains": [
+                        "url"
+                    ],
+                    "example_values": [
+                        1
+                    ],
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*._links.unsuspend.method",
@@ -1448,6 +1631,13 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.credentials.emails.*.status",
+                    "example_values": [
+                        "VERIFIED"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.credentials.emails.*.type",
                     "example_values": [
                         "PRIMARY"
@@ -1459,6 +1649,16 @@
                         "email"
                     ],
                     "data_path": "action_result.data.*.credentials.emails.*.value",
+                    "example_values": [
+                        "test@splunk.com"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.value",
+                    "contains": [
+                        "email"
+                    ],
                     "example_values": [
                         "test@splunk.com"
                     ],
@@ -1564,7 +1764,7 @@
                 {
                     "data_path": "action_result.data.*.profile.login",
                     "contains": [
-                        "email"
+                        "user name"
                     ],
                     "example_values": [
                         "test@splunk.com"
@@ -1583,28 +1783,11 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.credentials.emails.*.status",
-                    "example_values": [
-                        "VERIFIED"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.profile.nickName",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.profile.secondEmail",
-                    "contains": [
-                        "email"
-                    ],
-                    "example_values": [
-                        "test@splunk.com"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.emails.*.value",
                     "contains": [
                         "email"
                     ],
@@ -1643,16 +1826,6 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*._links.unsuspend.href",
-                    "contains": [
-                        "url"
-                    ],
-                    "example_values": [
-                        1
-                    ],
-                    "data_type": "numeric"
-                },
-                {
                     "data_path": "action_result.data.*.type.id",
                     "example_values": [
                         "otyaa8hod6wG1QvhR0h7"
@@ -1660,39 +1833,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*._links.type.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/meta/types/user/otyaa8hod6wG1QvhR0h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.schema.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/meta/schemas/user/oscaa8hod6wG1QvhR0h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.activate.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7/lifecycle/activate"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.activate.method",
-                    "example_values": [
-                        "POST"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -1700,10 +1841,6 @@
                     "example_values": [
                         "Successfully set user password"
                     ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -1752,6 +1889,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
                     "contains": [
@@ -1768,11 +1913,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -1783,10 +1924,6 @@
                     "data_type": "string",
                     "column_order": 1,
                     "column_name": "Message"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -1829,6 +1966,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
                     "contains": [
@@ -1845,11 +1990,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -1860,10 +2001,6 @@
                     "data_type": "string",
                     "column_order": 1,
                     "column_name": "Message"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -1907,6 +2044,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.id",
                     "data_type": "string",
                     "contains": [
@@ -1923,11 +2068,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -1938,10 +2079,6 @@
                     "data_type": "string",
                     "column_order": 1,
                     "column_name": "Message"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -1984,6 +2121,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.user_id",
                     "contains": [
                         "okta user id"
@@ -2000,6 +2145,23 @@
                     ],
                     "example_values": [
                         "https://your-org.okta.com/api/v1/users/00ugfn1pbgCsesAga0h7/lifecycle/activate"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.activate.href",
+                    "contains": [
+                        "url"
+                    ],
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00ugfn1pbgCsesAga0h7/lifecycle/activate"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.activate.method",
+                    "example_values": [
+                        "POST"
                     ],
                     "data_type": "string"
                 },
@@ -2106,7 +2268,38 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*._links.reactivate.href",
+                    "contains": [
+                        "url"
+                    ],
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00ugdwq3wbdAwsSQA0h7/lifecycle/reactivate"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*._links.reactivate.method",
+                    "example_values": [
+                        "POST"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.reactivate.method",
+                    "example_values": [
+                        "POST"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.resetFactors.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00uaa8hodkEIHTO1s0h7/lifecycle/reset_factors"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.resetFactors.method",
                     "example_values": [
                         "POST"
                     ],
@@ -2126,6 +2319,13 @@
                     "data_path": "action_result.data.*._links.resetPassword.method",
                     "example_values": [
                         "POST"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.schema.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/meta/schemas/user/oscaa8hod6wG1QvhR0h7"
                     ],
                     "data_type": "string"
                 },
@@ -2157,6 +2357,27 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*._links.type.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/meta/types/user/otyaa8hod6wG1QvhR0h7"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.unsuspend.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7/lifecycle/unsuspend"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.unsuspend.method",
+                    "example_values": [
+                        "POST"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.activated",
                     "example_values": [
                         "2018-05-25T21:01:55.000Z"
@@ -2178,6 +2399,20 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.credentials.emails.*.status",
+                    "example_values": [
+                        "VERIFIED"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.type",
+                    "example_values": [
+                        "PRIMARY"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.credentials.emails.*.type",
                     "example_values": [
                         "PRIMARY"
@@ -2189,6 +2424,16 @@
                         "email"
                     ],
                     "data_path": "action_result.data.*.credentials.emails.*.value",
+                    "example_values": [
+                        "test@splunk.com"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.value",
+                    "contains": [
+                        "email"
+                    ],
                     "example_values": [
                         "test@splunk.com"
                     ],
@@ -2294,7 +2539,7 @@
                 {
                     "data_path": "action_result.data.*.profile.login",
                     "contains": [
-                        "email"
+                        "user name"
                     ],
                     "example_values": [
                         "test@splunk.com"
@@ -2357,64 +2602,6 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.credentials.emails.*.status",
-                    "example_values": [
-                        "VERIFIED"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.emails.*.type",
-                    "example_values": [
-                        "PRIMARY"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.emails.*.value",
-                    "contains": [
-                        "email"
-                    ],
-                    "example_values": [
-                        "test@splunk.com"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.reactivate.href",
-                    "contains": [
-                        "url"
-                    ],
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00ugdwq3wbdAwsSQA0h7/lifecycle/reactivate"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.reactivate.method",
-                    "example_values": [
-                        "POST"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.activate.href",
-                    "contains": [
-                        "url"
-                    ],
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00ugfn1pbgCsesAga0h7/lifecycle/activate"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.activate.method",
-                    "example_values": [
-                        "POST"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.type.id",
                     "example_values": [
                         "otyaa8hod6wG1QvhR0h7"
@@ -2422,53 +2609,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*._links.type.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/meta/types/user/otyaa8hod6wG1QvhR0h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.schema.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/meta/schemas/user/oscaa8hod6wG1QvhR0h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.resetFactors.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uaa8hodkEIHTO1s0h7/lifecycle/reset_factors"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.resetFactors.method",
-                    "example_values": [
-                        "POST"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.unsuspend.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7/lifecycle/unsuspend"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.unsuspend.method",
-                    "example_values": [
-                        "POST"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -2476,10 +2617,6 @@
                     "example_values": [
                         "Successfully retrieved user"
                     ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -2527,6 +2664,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.group_id",
                     "contains": [
                         "okta group id"
@@ -2567,6 +2712,13 @@
                     "data_path": "action_result.data.*._links.logo.*.type",
                     "example_values": [
                         "image/png"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.source.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/apps/0oambdtud0Skc25180h7"
                     ],
                     "data_type": "string"
                 },
@@ -2627,53 +2779,9 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.name",
-                    "example_values": [
-                        "Everyone",
-                        "West Coast Users"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.type",
-                    "example_values": [
-                        "BUILT_IN",
-                        "OKTA_GROUP"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.source.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/apps/0oambdtud0Skc25180h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.source.id",
-                    "example_values": [
-                        "0oambdtud0Skc25180h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.profile.dn",
                     "example_values": [
                         "CN=Allowed RODC Password Replication Group,CN=Users,DC=corp,DC=contoso,DC=com"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.groupType",
-                    "example_values": [
-                        "Security"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.objectSid",
-                    "example_values": [
-                        "S-1-5-21-3790544232-372029393-2474287633-571"
                     ],
                     "data_type": "string"
                 },
@@ -2692,6 +2800,28 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.profile.groupType",
+                    "example_values": [
+                        "Security"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.name",
+                    "example_values": [
+                        "Everyone",
+                        "West Coast Users"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.objectSid",
+                    "example_values": [
+                        "S-1-5-21-3790544232-372029393-2474287633-571"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.profile.samAccountName",
                     "example_values": [
                         "Allowed RODC Password Replication Group"
@@ -2706,11 +2836,22 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.source.id",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "0oambdtud0Skc25180h7"
                     ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "example_values": [
+                        "BUILT_IN",
+                        "OKTA_GROUP"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -2718,10 +2859,6 @@
                     "example_values": [
                         "Successfully retrieved group"
                     ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -2780,6 +2917,14 @@
                 }
             },
             "output": [
+                {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
                 {
                     "data_path": "action_result.parameter.limit",
                     "example_values": [
@@ -3038,21 +3183,6 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "example_values": [
-                        "Num idps: 1"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.summary",
                     "data_type": "string"
                 },
@@ -3063,6 +3193,13 @@
                         0
                     ],
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "example_values": [
+                        "Num idps: 1"
+                    ],
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -3109,6 +3246,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.user_id",
                     "contains": [
                         "okta user id"
@@ -3119,9 +3264,76 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*._links.assignee.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.self.href",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00uqeqeo07E1ALkVG0h7"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.activated",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.assignmentType",
+                    "example_values": [
+                        "USER"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.created",
                     "example_values": [
                         "2018-04-21T02:42:31.000Z"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.status",
+                    "example_values": [
+                        "VERIFIED"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.type",
+                    "example_values": [
+                        "PRIMARY"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.emails.*.value",
+                    "example_values": [
+                        "test@example.com"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.provider.name",
+                    "example_values": [
+                        "OKTA"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.provider.type",
+                    "example_values": [
+                        "OKTA"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.credentials.recovery_question.question",
+                    "example_values": [
+                        "What is the food you least liked as a child?"
                     ],
                     "data_type": "string"
                 },
@@ -3147,139 +3359,14 @@
                     "column_name": "Label"
                 },
                 {
-                    "data_path": "action_result.data.*.lastUpdated",
-                    "example_values": [
-                        "2018-04-21T02:42:31.000Z"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.status",
-                    "example_values": [
-                        "ACTIVE"
-                    ],
-                    "data_type": "string",
-                    "column_order": 0,
-                    "column_name": "Status"
-                },
-                {
-                    "data_path": "action_result.data.*.type",
-                    "example_values": [
-                        "APP_ADMIN"
-                    ],
-                    "data_type": "string",
-                    "column_order": 2,
-                    "column_name": "Type"
-                },
-                {
-                    "data_path": "action_result.data.*._links.assignee.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.assignmentType",
-                    "example_values": [
-                        "USER"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.type.id",
-                    "example_values": [
-                        "otyaa8hod6wG1QvhR0h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*._links.self.href",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uqeqeo07E1ALkVG0h7"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.email",
-                    "example_values": [
-                        "test@example.com"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.login",
-                    "example_values": [
-                        "test@example.com"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.lastName",
-                    "example_values": [
-                        "Edwards"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.firstName",
-                    "example_values": [
-                        "Herman2"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.mobilePhone",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.secondEmail",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.activated",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.lastLogin",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.credentials.emails.*.type",
+                    "data_path": "action_result.data.*.lastUpdated",
                     "example_values": [
-                        "PRIMARY"
+                        "2018-04-21T02:42:31.000Z"
                     ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.emails.*.value",
-                    "example_values": [
-                        "test@example.com"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.emails.*.status",
-                    "example_values": [
-                        "VERIFIED"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.provider.name",
-                    "example_values": [
-                        "OKTA"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.credentials.provider.type",
-                    "example_values": [
-                        "OKTA"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.statusChanged",
                     "data_type": "string"
                 },
                 {
@@ -3294,28 +3381,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.title",
-                    "example_values": [
-                        "Leader of Herman's Hermits"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.nickName",
-                    "example_values": [
-                        "c\u00e9dille"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.profile.department",
-                    "example_values": [
-                        "c\u00e9dille"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.profile.middleName",
                     "example_values": [
                         "c\u00e9dille"
                     ],
@@ -3329,16 +3395,51 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.profile.streetAddress",
+                    "data_path": "action_result.data.*.profile.email",
                     "example_values": [
-                        "123 Anystreet"
+                        "test@example.com"
                     ],
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.credentials.recovery_question.question",
+                    "data_path": "action_result.data.*.profile.firstName",
                     "example_values": [
-                        "What is the food you least liked as a child?"
+                        "Herman2"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.lastName",
+                    "example_values": [
+                        "Edwards"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.login",
+                    "contains": [
+                        "user name"
+                    ],
+                    "example_values": [
+                        "test@example.com"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.middleName",
+                    "example_values": [
+                        "c\u00e9dille"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.mobilePhone",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.nickName",
+                    "example_values": [
+                        "c\u00e9dille"
                     ],
                     "data_type": "string"
                 },
@@ -3347,17 +3448,49 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.profile.secondEmail",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.profile.streetAddress",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "123 Anystreet"
                     ],
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.profile.title",
                     "example_values": [
-                        "Num roles: 2"
+                        "Leader of Herman's Hermits"
+                    ],
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.status",
+                    "example_values": [
+                        "ACTIVE"
+                    ],
+                    "data_type": "string",
+                    "column_order": 0,
+                    "column_name": "Status"
+                },
+                {
+                    "data_path": "action_result.data.*.statusChanged",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "example_values": [
+                        "APP_ADMIN"
+                    ],
+                    "data_type": "string",
+                    "column_order": 2,
+                    "column_name": "Type"
+                },
+                {
+                    "data_path": "action_result.data.*.type.id",
+                    "example_values": [
+                        "otyaa8hod6wG1QvhR0h7"
                     ],
                     "data_type": "string"
                 },
@@ -3371,6 +3504,13 @@
                         2
                     ],
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "example_values": [
+                        "Num roles: 2"
+                    ],
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -3431,6 +3571,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.type",
                     "example_values": [
                         "MOBILE_ADMIN"
@@ -3446,6 +3594,20 @@
                         "00uaa8hodkEIHTO1s0h7"
                     ],
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*._links.assignee.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.assignmentType",
+                    "data_type": "string",
+                    "example_values": [
+                        "USER"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.created",
@@ -3499,25 +3661,7 @@
                     "column_name": "Type"
                 },
                 {
-                    "data_path": "action_result.data.*._links.assignee.href",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.assignmentType",
-                    "data_type": "string",
-                    "example_values": [
-                        "USER"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -3525,10 +3669,6 @@
                     "example_values": [
                         "Successfully assigned role to user"
                     ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -3582,6 +3722,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ],
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.role_id",
                     "data_type": "string",
                     "contains": [
@@ -3610,11 +3758,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.status",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ],
+                    "data_path": "action_result.summary",
                     "data_type": "string"
                 },
                 {
@@ -3625,10 +3769,6 @@
                     "data_type": "string",
                     "column_order": 2,
                     "column_name": "Message"
-                },
-                {
-                    "data_path": "action_result.summary",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -3649,37 +3789,484 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "add group user",
+            "identifier": "add_group_user",
+            "description": "Add a user to an Okta group",
+            "verbose": "Adds a user to a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type.\nApplication imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups.",
+            "type": "generic",
+            "read_only": false,
+            "undo": "remove group user",
+            "parameters": {
+                "group_id": {
+                    "description": "Group id",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "okta group id"
+                    ],
+                    "order": 0
+                },
+                "user_id": {
+                    "description": "User id",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "okta user id"
+                    ],
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 4,
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "data_type": "string",
+                    "contains": [
+                        "okta group id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "string",
+                    "contains": [
+                        "okta user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.group_id",
+                    "data_type": "string",
+                    "column_name": "Group ID",
+                    "column_order": 3,
+                    "contains": [
+                        "okta group id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.group_name",
+                    "data_type": "string",
+                    "column_name": "Group Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.user_id",
+                    "data_type": "string",
+                    "column_name": "User ID",
+                    "column_order": 2,
+                    "contains": [
+                        "okta user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.user_name",
+                    "data_type": "string",
+                    "contains": [
+                        "user name",
+                        "email"
+                    ],
+                    "column_name": "User Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.summary.group_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "00gw7z0fzcJdhfDSb0h7"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.group_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "test_group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.user_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "00u149z08g1Ln68zy0h8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.user_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "john.doe@email.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "remove group user",
+            "identifier": "remove_group_user",
+            "description": "Remove a user from a group",
+            "verbose": "Removes a user from a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type. Application imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups.",
+            "type": "generic",
+            "read_only": false,
+            "undo": "add group user",
+            "parameters": {
+                "group_id": {
+                    "description": "Group id",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "okta group id"
+                    ],
+                    "order": 0
+                },
+                "user_id": {
+                    "description": "User id",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "okta user id"
+                    ],
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 4,
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.group_id",
+                    "data_type": "string",
+                    "contains": [
+                        "okta group id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "string",
+                    "contains": [
+                        "okta user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.group_id",
+                    "data_type": "string",
+                    "column_name": "Group ID",
+                    "column_order": 3,
+                    "contains": [
+                        "okta group id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.group_name",
+                    "data_type": "string",
+                    "column_name": "Group Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.user_id",
+                    "data_type": "string",
+                    "column_name": "User ID",
+                    "column_order": 2,
+                    "contains": [
+                        "okta user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.user_name",
+                    "data_type": "string",
+                    "contains": [
+                        "user name",
+                        "email"
+                    ],
+                    "column_name": "User Name",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.summary.group_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "00gw7z0fzcJdhfDSb0h7"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.group_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "test_group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.user_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "00u149z08g1Ln68zy0h8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.user_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "john.doe@email.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get user groups",
+            "identifier": "get_user_groups",
+            "description": "List groups the user is part of",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "user_id": {
+                    "description": "User id",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "okta user id"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.user_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "Retrived 00u14plts1Ln68zy0h8 groups"
+                    ],
+                    "contains": [
+                        "okta user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.apps.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.okta.com/api/v1/groups/00erfdscocsNAbvEyn0h7/apps"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.logo.*.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://op1static.oktacdn.com/assets/img/logos/groups/odyssey/okta-medium.1a5ebrgdfdvb796c235d86b47e3bb.png"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.logo.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "medium"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.logo.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "image/png"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*._links.users.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://test.okta.com/api/v1/groups/00gaa8hergfbvEyn0h7/users"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.created",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-04-26T01:37:27.000Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "00gaa8rtgdsvAbvEyn0h7"
+                    ],
+                    "contains": [
+                        "okta group id"
+                    ],
+                    "column_name": "Group ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.lastMembershipUpdated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2022-04-18T13:26:01.000Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.lastUpdated",
+                    "data_type": "string",
+                    "example_values": [
+                        "2017-04-26T01:37:27.000Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.profile.description",
+                    "data_type": "string",
+                    "example_values": [
+                        "All users in your organization"
+                    ],
+                    "column_name": "Description",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.profile.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "Everyone"
+                    ],
+                    "column_name": "Name",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "BUILT_IN"
+                    ],
+                    "column_name": "Type",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_groups",
+                    "data_type": "numeric",
+                    "example_value": 2
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Total groups: 3"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {
         "wheel": [
             {
                 "module": "beautifulsoup4",
-                "input_file": "wheels/beautifulsoup4-4.9.1-py3-none-any.whl"
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
             },
             {
                 "module": "certifi",
-                "input_file": "wheels/certifi-2021.10.8-py2.py3-none-any.whl"
+                "input_file": "wheels/py3/certifi-2022.5.18.1-py3-none-any.whl"
             },
             {
                 "module": "chardet",
-                "input_file": "wheels/chardet-3.0.4-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
             },
             {
                 "module": "idna",
-                "input_file": "wheels/idna-2.10-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
             },
             {
                 "module": "requests",
-                "input_file": "wheels/requests-2.25.0-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/soupsieve-2.3-py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
             },
             {
                 "module": "urllib3",
-                "input_file": "wheels/urllib3-1.26.7-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/urllib3-1.26.9-py2.py3-none-any.whl"
             }
         ]
     }

@@ -17,7 +17,7 @@ OKTA_API_TOKEN = "api_key"
 OKTA_PAGINATED_ACTIONS_LIST = [
     'list_users', 'list_user_groups', 'list_providers', 'list_roles']
 
-OKTA_RESET_PASSWORD_SUCC = "Successfully created one-time token for user to reset password"
+OKTA_RESET_PASSWORD_SUCC = "Successfully created one-time token for user to reset password"  # pragma: allowlist secret
 
 OKTA_LIMIT_INVALID_MSG_ERR = "Please provide a valid positive integer value for 'limit' action parameter"
 OKTA_LIMIT_NON_ZERO_POSITIVE_MSG_ERR = "Please provide a valid non-zero positive integer value for 'limit' action parameter"
@@ -29,7 +29,7 @@ OKTA_ALREADY_DISABLED_USER_ERR = "User is already disabled"
 OKTA_ENABLE_USER_SUCC = "Successfully enabled the user"
 OKTA_ALREADY_ENABLED_USER_ERR = "User is already enabled"
 
-OKTA_SET_PASSWORD_SUCC = "Successfully set user password"
+OKTA_SET_PASSWORD_SUCC = "Successfully set user password"  # pragma: allowlist secret
 
 OKTA_ASSIGN_ROLE_SUCC = "Successfully assigned role to user"
 OKTA_ALREADY_ASSIGN_ROLE_ERR = "Role is already assigned to user"
@@ -70,3 +70,8 @@ ROLE_TYPE_VALUE_LIST = [
     "SUPER_ADMIN", "ORG_ADMIN", "API_ACCESS_MANAGEMENT_ADMIN", "APP_ADMIN", "USER_ADMIN", "MOBILE_ADMIN", "READ_ONLY_ADMIN",
     "HELP_DESK_ADMIN", "GROUP_MEMBERSHIP_ADMIN", "REPORT_ADMIN"]
 VALUE_LIST_VALIDATION_MSG = "Please provide valid input from {} in '{}' action parameter"
+
+OKTA_STATE_FILE_CORRUPT_ERR = (
+    "Error occurred while loading the state file due to its unexpected format. "
+    "Resetting the state file with the default format. Please try again."
+)

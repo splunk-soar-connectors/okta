@@ -52,7 +52,7 @@ class OktaConnector(BaseConnector):
 
     def _process_empty_response(self, response, action_result):
 
-        if response.status_code == 200:
+        if 200 <= response.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, {})
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
@@ -636,6 +636,33 @@ class OktaConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS, OKTA_GET_GROUP_SUCC)
 
+    def _handle_get_user_groups(self, param):
+        """
+        This action is used to get all the groups associated with a user id
+        :param user_id: Okta user id to search for
+        :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message)
+        """
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+
+        # make rest call
+        ret_val, response = self._make_rest_call(f'/users/{user_id}/groups', action_result)
+
+        if phantom.is_fail(ret_val):
+            action_result.set_status(phantom.APP_ERROR, response)
+            return action_result.get_status()
+
+        # Add the response into the data section
+        for item in response:
+            action_result.add_data(item)
+
+        summary = action_result.update_summary({})
+        summary['total_groups'] = action_result.get_data_size()
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def _handle_add_group(self, param):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -795,13 +822,13 @@ class OktaConnector(BaseConnector):
             if 'Empty response and no information in the header' in message:
                 # Add the response into the data section
                 action_result.add_data({})
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_UNASSIGN_ROLE_SUCC)
+                return action_result.set_status(phantom.APP_ERROR, OKTA_UNASSIGN_ROLE_SUCC)
             if 'Not found' in message:
                 # Add the response into the data section
                 action_result.add_data({})
                 return action_result.set_status(phantom.APP_ERROR, OKTA_ALREADY_UNASSIGN_ROLE_ERR)
             return action_result.get_status()
-        return action_result.set_status(phantom.APP_ERROR)
+        return action_result.set_status(phantom.APP_SUCCESS, OKTA_UNASSIGN_ROLE_SUCC)
 
     def _handle_send_push_notification(self, param):
 
@@ -910,6 +937,102 @@ class OktaConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully sent push notification")
 
+    def _handle_add_group_user(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        group_id = param['group_id']
+        user_id = param['user_id']
+
+        # translate user_id to name:
+        ret_val, response = self._make_rest_call(
+           f'/users/{user_id}', action_result, method="get"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid user_id: {user_id}. {str(response)}')
+        user_name = response['profile']['login']
+
+        # translate group_id to name:
+        ret_val, response = self._make_rest_call(
+           f'/groups/{group_id}', action_result, method="get"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid group_id: {group_id}')
+        group_name = response['profile']['name']
+
+        # update group membership:
+        ret_val, response = self._make_rest_call(
+            f'/groups/{group_id}/users/{user_id}', action_result, method="put"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if not response:
+            action_result.add_data({
+                'user_id': user_id,
+                'user_name': user_name,
+                'group_id': group_id,
+                'group_name': group_name
+            })
+        else:
+            action_result.add_data(response)
+
+        summary = action_result.update_summary({})
+        summary['user_id'] = user_id
+        summary['user_name'] = user_name
+        summary['group_id'] = group_id
+        summary['group_name'] = group_name
+
+        return action_result.set_status(phantom.APP_SUCCESS, f"Added user '{user_name}' ({user_id}) to group '{group_name}' ({group_id})")
+
+    def _handle_remove_group_user(self, param):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        user_id = param['user_id']
+        group_id = param['group_id']
+
+        # translate user_id to name:
+        ret_val, response = self._make_rest_call(
+           f'/users/{user_id}', action_result, method="get"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid user_id: {user_id}')
+        user_name = response['profile']['login']
+
+        # translate group_id to name:
+        ret_val, response = self._make_rest_call(
+           f'/groups/{group_id}', action_result, method="get"
+        )
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(phantom.APP_ERROR, f'Invalid group_id: {group_id}')
+        group_name = response['profile']['name']
+
+        # remove user from group
+        ret_val, response = self._make_rest_call(
+            f"/groups/{group_id}/users/{user_id}", action_result, method="delete"
+        )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+        if not response:
+            action_result.add_data({
+                'user_id': user_id,
+                'user_name': user_name,
+                'group_id': group_id,
+                'group_name': group_name
+            })
+        else:
+            action_result.add_data(response)
+        summary = action_result.update_summary({})
+        summary['user_id'] = user_id
+        summary['user_name'] = user_name
+        summary['group_id'] = group_id
+        summary['group_name'] = group_name
+
+        return action_result.set_status(phantom.APP_SUCCESS, f"Removed user '{user_name}' ({user_id}) from group '{group_name}' ({group_id})")
+
     def handle_action(self, param):
 
         ret_val = phantom.APP_SUCCESS
@@ -949,6 +1072,9 @@ class OktaConnector(BaseConnector):
         elif action_id == 'get_user':
             ret_val = self._handle_get_user(param)
 
+        elif action_id == 'get_user_groups':
+            ret_val = self._handle_get_user_groups(param)
+
         elif action_id == 'list_providers':
             ret_val = self._handle_list_providers(param)
 
@@ -967,6 +1093,12 @@ class OktaConnector(BaseConnector):
         elif action_id == 'clear_user_sessions':
             ret_val = self._handle_clear_user_sessions(param)
 
+        elif action_id == 'add_group_user':
+            ret_val = self._handle_add_group_user(param)
+
+        elif action_id == 'remove_group_user':
+            ret_val = self._handle_remove_group_user(param)
+
         return ret_val
 
     def initialize(self):
@@ -978,6 +1110,10 @@ class OktaConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, "Error occurred while getting the Phantom server's Python major version.")
 
         self._state = self.load_state()
+        if not isinstance(self._state, dict):
+            self.debug_print("Resetting the state file with the default format")
+            self._state = {"app_version": self.get_app_json().get("app_version")}
+
         config = self.get_config()
 
         self._api_token = config[OKTA_API_TOKEN]
