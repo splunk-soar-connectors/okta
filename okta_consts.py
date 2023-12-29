@@ -1,6 +1,6 @@
 # File: okta_consts.py
 #
-# Copyright (c) 2018-2022 Splunk Inc.
+# Copyright (c) 2018-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ OKTA_UNASSIGN_ROLE_SUCC = "Successfully unassigned role to user"
 OKTA_ALREADY_UNASSIGN_ROLE_ERR = "Role is not assigned to user"
 
 OKTA_ALREADY_ADDED_GROUP_ERR = "Group already added to organization"
-OKTA_ADDED_GROUP_SUCCESS_MSG = "Group has been added successfully"
+OKTA_ADDED_GROUP_SUCC_MSG = "Group has been added successfully"
 
 OKTA_GET_GROUP_SUCC = "Successfully retrieved group"
 OKTA_GET_USER_SUCC = "Successfully retrieved user"
