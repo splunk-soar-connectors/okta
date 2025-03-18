@@ -1,16 +1,17 @@
 {% extends 'widgets/widget_template.html' %}
 {% load custom_template %}
-
-{% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
 {% block title1 %}{{ title1 }}{% endblock %}
 {% block title2 %}{{ title2 }}{% endblock %}
-{% block custom_tools %}
-{% endblock %}
-
-{% block widget_content %} <!-- Main Start Block -->
-
-<!-- File: display_list_user.html
-  Copyright (c) 2018-2023 Splunk Inc.
+{% block custom_tools %}{% endblock %}
+{% block widget_content %}
+  <!-- Main Start Block -->
+  <!-- File: display_list_user.html
+  Copyright (c) 2018-2025 Splunk Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -23,9 +24,7 @@
   either express or implied. See the License for the specific language governing permissions
   and limitations under the License.
 -->
-
-<style>
-
+  <style>
 .okta-app a:hover {
   text-decoration:underline;
 }
@@ -79,50 +78,56 @@
   white-space: nowrap;
 }
 
-</style>
-<div class="okta-app" style="overflow: auto; width: 100%; height: 100%; padding-left:10px; padding-right:10px"> <!-- Main Div -->
-<br>
-
-<!------------------- For each Result ---------------------->
-  {% for result in results %}
-    {% if result.data %}
-    <div class="list_items_table overflow-column">
-        <table class="phantom-table dataTable">
+  </style>
+  <div class="okta-app"
+       style="overflow: auto;
+              width: 100%;
+              height: 100%;
+              padding-left:10px;
+              padding-right:10px">
+    <!-- Main Div -->
+    <br>
+    <!------------------- For each Result ---------------------->
+    {% for result in results %}
+      {% if result.data %}
+        <div class="list_items_table overflow-column">
+          <table class="phantom-table dataTable">
             <thead>
-                <th>STATUS</th>
-                <th>FIRST NAME</th>
-                <th>LAST NAME</th>
-                <th>USER ID</th>
-                <th>LAST LOGIN</th>
+              <th>STATUS</th>
+              <th>FIRST NAME</th>
+              <th>LAST NAME</th>
+              <th>USER ID</th>
+              <th>LAST LOGIN</th>
             </thead>
             <tbody>
-                {% for curr_data in result.data %}
-                    <tr>
-                        <td class="widget-td">{{ curr_data.status }}</td>
-                        <td>{{ curr_data.profile.firstName }}</td>
-                        <td>{{ curr_data.profile.lastName }}</td>
-                        <td>
-                            <a class="no-word-wrap" href="javascript:;" onclick="context_menu(this, [{'contains': ['okta user id'], 'value': '{{ curr_data.id }}' }], 0, {{ container.id }}, null, false);">
-                                {{ curr_data.id }}
-                                &nbsp;<span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                            </a>
-                        </td>
-                        <td  class="no-word-wrap">{{ curr_data.lastLogin }}</td>
-                    </tr>
-                {% endfor %}
+              {% for curr_data in result.data %}
+                <tr>
+                  <td class="widget-td">{{ curr_data.status }}</td>
+                  <td>{{ curr_data.profile.firstName }}</td>
+                  <td>{{ curr_data.profile.lastName }}</td>
+                  <td>
+                    <a class="no-word-wrap"
+                       href="javascript:;"
+                       onclick="context_menu(this, [{'contains': ['okta user id'], 'value': '{{ curr_data.id }}' }], 0, {{ container.id }}, null, false);">
+                      {{ curr_data.id }}
+                      &nbsp;<span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                    </a>
+                  </td>
+                  <td class="no-word-wrap">{{ curr_data.lastLogin }}</td>
+                </tr>
+              {% endfor %}
             </tbody>
-        </table>
+          </table>
         </div>
-    {% else %}
-        <p class="wf-h4-style"> No users found </p>
-    {% endif %}
-  {% endfor %}
-<br>
-
-<!------------------- For each Result END ---------------------->
-</div> <!-- Main Div -->
-
-<script>
+      {% else %}
+        <p class="wf-h4-style">No users found</p>
+      {% endif %}
+    {% endfor %}
+    <br>
+    <!------------------- For each Result END ---------------------->
+  </div>
+  <!-- Main Div -->
+  <script>
 $.extend(true, $.fn.dataTable.defaults, {
     "searching": true,
     "bLengthChange": false,
@@ -141,6 +146,6 @@ $.extend(true, $.fn.dataTable.defaults, {
   });
   $('.dataTable').DataTable();
 
-</script>
-
-{% endblock %} <!-- Main Start Block -->
+  </script>
+{% endblock %}
+<!-- Main Start Block -->
