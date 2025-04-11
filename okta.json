@@ -3,7 +3,7 @@
     "product_version_regex": ".*",
     "description": "This app supports various identity management actions on Okta",
     "package_name": "phantom_okta",
-    "utctime_updated": "2022-01-12T18:10:20.000000Z",
+    "utctime_updated": "2025-04-11T18:17:48.636037Z",
     "product_vendor": "Okta",
     "logo": "logo_okta.svg",
     "logo_dark": "logo_okta_dark.svg",
@@ -13,7 +13,7 @@
     "min_phantom_version": "5.2.0",
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
-    "app_version": "2.3.1",
+    "app_version": "2.3.2",
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
@@ -3383,14 +3383,14 @@
                 {
                     "data_path": "action_result.data.*.profile.department",
                     "example_values": [
-                        "cédille"
+                        "c\u00e9dille"
                     ],
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.profile.displayName",
                     "example_values": [
-                        "cédille"
+                        "c\u00e9dille"
                     ],
                     "data_type": "string"
                 },
@@ -3428,7 +3428,7 @@
                 {
                     "data_path": "action_result.data.*.profile.middleName",
                     "example_values": [
-                        "cédille"
+                        "c\u00e9dille"
                     ],
                     "data_type": "string"
                 },
@@ -3439,7 +3439,7 @@
                 {
                     "data_path": "action_result.data.*.profile.nickName",
                     "example_values": [
-                        "cédille"
+                        "c\u00e9dille"
                     ],
                     "data_type": "string"
                 },
