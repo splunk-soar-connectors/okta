@@ -195,6 +195,9 @@ class OktaConnector(BaseConnector):
         :return: error message
         """
 
+        err_code = ERR_CODE_MSG
+        err_msg = ERR_MSG_UNAVAILABLE
+
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
