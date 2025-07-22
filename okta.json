@@ -14,7 +14,7 @@
     "product_name": "Okta",
     "app_wizard_version": "1.0.0",
     "app_version": "2.3.2",
-    "python_version": "3",
+    "python_version": ["3.9", "3.13"],
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, Version 2022.05.3 C"
