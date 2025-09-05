@@ -1,9 +1,9 @@
 # Okta
 
-Publisher: Splunk \
-Connector Version: 2.3.2 \
-Product Vendor: Okta \
-Product Name: Okta \
+Publisher: Splunk <br>
+Connector Version: 2.3.2 <br>
+Product Vendor: Okta <br>
+Product Name: Okta <br>
 Minimum Product Version: 5.2.0
 
 This app supports various identity management actions on Okta
@@ -128,31 +128,31 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[send push notification](#action-send-push-notification) - Validate the user prompt with push notification \
-[list users](#action-list-users) - Get the list of users \
-[list user groups](#action-list-user-groups) - Enumerates Groups in your organization with pagination. A subset of Groups can be returned that match a supported filter expression or query \
-[add group](#action-add-group) - Add a group \
-[reset password](#action-reset-password) - Generate a one-time token that can be used to reset the user's password \
-[set password](#action-set-password) - Set the password of a user without validating existing credentials \
-[disable user](#action-disable-user) - Disables the specified user \
-[clear user sessions](#action-clear-user-sessions) - Clears the specified user's sessions \
-[enable user](#action-enable-user) - Enables the specified user \
-[get user](#action-get-user) - Get information about a user \
-[get group](#action-get-group) - Get information about a group \
-[list providers](#action-list-providers) - List identity providers (IdPs) in your organization \
-[list roles](#action-list-roles) - Lists all roles assigned to a user \
-[assign role](#action-assign-role) - Assign a role to a user \
-[unassign role](#action-unassign-role) - Unassign a role to a user \
-[add group user](#action-add-group-user) - Add a user to an Okta group \
-[remove group user](#action-remove-group-user) - Remove a user from a group \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[send push notification](#action-send-push-notification) - Validate the user prompt with push notification <br>
+[list users](#action-list-users) - Get the list of users <br>
+[list user groups](#action-list-user-groups) - Enumerates Groups in your organization with pagination. A subset of Groups can be returned that match a supported filter expression or query <br>
+[add group](#action-add-group) - Add a group <br>
+[reset password](#action-reset-password) - Generate a one-time token that can be used to reset the user's password <br>
+[set password](#action-set-password) - Set the password of a user without validating existing credentials <br>
+[disable user](#action-disable-user) - Disables the specified user <br>
+[clear user sessions](#action-clear-user-sessions) - Clears the specified user's sessions <br>
+[enable user](#action-enable-user) - Enables the specified user <br>
+[get user](#action-get-user) - Get information about a user <br>
+[get group](#action-get-group) - Get information about a group <br>
+[list providers](#action-list-providers) - List identity providers (IdPs) in your organization <br>
+[list roles](#action-list-roles) - Lists all roles assigned to a user <br>
+[assign role](#action-assign-role) - Assign a role to a user <br>
+[unassign role](#action-unassign-role) - Unassign a role to a user <br>
+[add group user](#action-add-group-user) - Add a user to an Okta group <br>
+[remove group user](#action-remove-group-user) - Remove a user from a group <br>
 [get user groups](#action-get-user-groups) - List groups the user is part of
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -167,7 +167,7 @@ No Output
 
 Validate the user prompt with push notification
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 The action has not yet been implemented for the "sms" and the "token:software:totp" factortypes.<br>Currently, the action would generate a new OTP for the "sms" factortype and will not verify it.<br>The action would fail for the "token:software:totp" factortype as it has not yet been implemented.<br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li></ul>
@@ -240,7 +240,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the list of users
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Limit parameter is used to provide total number of users to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of users by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>firstName</strong>, <strong>lastName</strong>, or <strong>email</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>status</li><li>lastUpdated</li><li>id</li><li>profile.login</li><li>profile.email</li><li>profile.firstName</li><li>profile.lastName</li></ul><p>Use the <strong>search</strong> parameter to do a case-insensitive search on the following properties:</p><ul><li>id</li><li>status</li><li>created</li><li>activated</li><li>statusChanged</li><li>lastUpdated</li></ul><p>Filter and search operators:</p><ul><li>eq: equal</li><li>sw: starts with</li><li>pr: present (has value)</li><li>gt: greater than</li><li>ge: greater than or equal</li><li>lt: less than</li><li>le: less than or equal</li></ul><p>Filter and search examples:</p><ul><li>status eq "STAGED"</li><li>lastUpdated lt "yyyy-MM-dd'T'HH:mm:ss.SSSZ"</li><li>lastUpdated gt "yyyy-MM-dd'T'HH:mm:ss.SSSZ"</li></ul><br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li><li>REPORT_ADMIN</li><li>MOBILE_ADMIN</li></ul>
@@ -306,7 +306,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Enumerates Groups in your organization with pagination. A subset of Groups can be returned that match a supported filter expression or query
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Limit parameter is used to provide total number of user groups to be fetched. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of groups by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>. <br />Use the <strong>filter</strong> parameter to filter on the following properties:<ul><li>type</li><li>lastMembershipUpdated</li><li>id</li><li>lastUpdated</li></ul><br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li><li>MOBILE_ADMIN</li></ul>
@@ -359,7 +359,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add a group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li></ul>
@@ -401,7 +401,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Generate a one-time token that can be used to reset the user's password
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li></ul>
@@ -430,7 +430,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Set the password of a user without validating existing credentials
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li></ul>
@@ -510,7 +510,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Disables the specified user
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li></ul>
@@ -537,7 +537,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Clears the specified user's sessions
 
-Type: **contain** \
+Type: **contain** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li>clear user sessions</ul>
@@ -564,7 +564,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Enables the specified user
 
-Type: **correct** \
+Type: **correct** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>USER_ADMIN</li></ul>
@@ -591,7 +591,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get information about a user
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li></ul>
@@ -677,7 +677,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get information about a group
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>APP_ADMIN</li><li>USER_ADMIN</li><li>HELP_DESK_ADMIN</li><li>GROUP_MEMBERSHIP_ADMIN</li><li>READ_ONLY_ADMIN</li><li>API_ACCESS_MANAGEMENT_ADMIN</li></ul>
@@ -725,7 +725,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List identity providers (IdPs) in your organization
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Limit parameter is used to provide total number of identity providers to be fetched from your organization. Please provide a valid positive integer value for limit. Use the <strong>query</strong> parameter for a simple lookup of idps by name, for example when creating a people picker. The value of <strong>query</strong> is matched against <strong>name</strong>.<br>One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li><li>ORG_ADMIN</li><li>READ_ONLY_ADMIN</li></ul>
@@ -788,7 +788,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Lists all roles assigned to a user
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>
@@ -849,7 +849,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Assign a role to a user
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>
@@ -885,7 +885,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Unassign a role to a user
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</li></ul>
@@ -914,7 +914,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Add a user to an Okta group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 Adds a user to a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type.
@@ -950,7 +950,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Remove a user from a group
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 Removes a user from a group of OKTA_GROUP type. You can modify only memberships for groups of OKTA_GROUP type. Application imports are responsible for managing group memberships for groups of APP_GROUP type such as Active Directory groups.
@@ -985,7 +985,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List groups the user is part of
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
