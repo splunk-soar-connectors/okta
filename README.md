@@ -4,7 +4,7 @@ Publisher: Splunk <br>
 Connector Version: 2.3.3 <br>
 Product Vendor: Okta <br>
 Product Name: Okta <br>
-Minimum Product Version: 5.2.0
+Minimum Product Version: 8.6.0
 
 This app supports various identity management actions on Okta
 
