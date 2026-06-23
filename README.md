@@ -4,7 +4,7 @@ Publisher: Splunk <br>
 Connector Version: 2.3.3 <br>
 Product Vendor: Okta <br>
 Product Name: Okta <br>
-Minimum Product Version: 5.2.0
+Minimum Product Version: 8.6.0
 
 This app supports various identity management actions on Okta
 
@@ -439,7 +439,7 @@ One of the following roles is required to run this action:<ul><li>SUPER_ADMIN</l
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**new_password** | required | Password string to set | string | |
+**new_password** | required | Password string to set | password | |
 **id** | required | ID of user | string | `okta user id` |
 
 #### Action Output
@@ -448,7 +448,7 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string | | success failed |
 action_result.parameter.id | string | `okta user id` | 00uby4va2hynIj0mS0h7 |
-action_result.parameter.new_password | string | | newPassword |
+action_result.parameter.new_password | password | | newPassword |
 action_result.data.\*.\_links.activate.href | string | | https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7/lifecycle/activate |
 action_result.data.\*.\_links.activate.method | string | | POST |
 action_result.data.\*.\_links.changePassword.href | string | `url` | https://your-org.okta.com/api/v1/users/00uaa8hodkEIHTO1s0h7/credentials/change_password |
@@ -1022,7 +1022,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
