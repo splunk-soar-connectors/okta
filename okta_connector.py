@@ -292,8 +292,13 @@ class OktaConnector(BaseConnector):
 
         response_list = []
         stop_pagination = False
+        pages_fetched = 0
 
         while not stop_pagination:
+            pages_fetched += 1
+            if pages_fetched > OKTA_MAX_PAGES:
+                action_result.set_status(phantom.APP_ERROR, OKTA_MAX_PAGES_MSG_ERR.format(max_pages=OKTA_MAX_PAGES))
+                return None
             after_count = 0
             # make rest call
             ret_val, response = self._make_rest_call(endpoint, action_result, params=params, headers=headers)
