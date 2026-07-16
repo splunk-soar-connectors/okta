@@ -274,7 +274,7 @@ class OktaConnector(BaseConnector):
 
         self.save_progress("Connecting to endpoint /users/me to test connectivity")
         # make rest call
-        ret_val, response = self._make_rest_call("/users/me", action_result, params=None, headers=None)
+        ret_val, _response = self._make_rest_call("/users/me", action_result, params=None, headers=None)
 
         if phantom.is_fail(ret_val):
             self.save_progress(OKTA_TEST_CONNECTIVITY_FAILED)
@@ -776,14 +776,14 @@ class OktaConnector(BaseConnector):
 
         user_id = self._handle_py_ver_compat_for_input_str(param["user_id"])
         role_id = self._handle_py_ver_compat_for_input_str(param["role_id"])
-        ret_val, response = self._make_rest_call(f"/users/{user_id}", action_result, params=None, headers=None)
+        ret_val, _response = self._make_rest_call(f"/users/{user_id}", action_result, params=None, headers=None)
 
         # Check the user is valid or not
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, OKTA_INVALID_USER_MSG)
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/roles/{role_id}", action_result, method="delete")
+        ret_val, _response = self._make_rest_call(f"/users/{user_id}/roles/{role_id}", action_result, method="delete")
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
             if "Empty response and no information in the header" in message:
