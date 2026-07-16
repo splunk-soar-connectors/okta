@@ -4,3 +4,4 @@
 * Escape widget values before inserting them into JavaScript contexts.
 * Enable TLS certificate verification by default for Okta connections.
 * Stop paginated actions when the server exceeds the maximum page count.
+* Exclude identity-provider client secrets from persisted action results.

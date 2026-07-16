@@ -709,6 +709,7 @@ class OktaConnector(BaseConnector):
 
         # Add the response into the data section
         for item in providers_list:
+            item.get("protocol", {}).get("credentials", {}).get("client", {}).pop("client_secret", None)
             action_result.add_data(item)
 
         # Add a dictionary that is made up of the most important values from data into the summary

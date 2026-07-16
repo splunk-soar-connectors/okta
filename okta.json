@@ -3109,13 +3109,6 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.protocol.credentials.client.client_secret",
-                    "example_values": [
-                        "qw8y7gztT5DznvmPfmdEmHo"
-                    ],
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.protocol.endpoints.authorization.binding",
                     "example_values": [
                         "HTTP-REDIRECT"
