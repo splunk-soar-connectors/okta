@@ -942,8 +942,10 @@ class OktaConnector(BaseConnector):
         else:
             return action_result.set_status(phantom.APP_ERROR, UNEXPECTED_RESPONSE_MSG)
 
-        # Return success, no need to set the message, only the status
-        # BaseConnector will create a textual message based off of the summary dictionary
+        factor_result = response_verify_ack.get("factorResult")
+        if factor_result != "SUCCESS":
+            return action_result.set_status(phantom.APP_ERROR, f"Okta push verification did not succeed: {factor_result or 'NO_RESULT'}")
+
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully sent push notification")
 
     def _handle_add_group_user(self, param):
