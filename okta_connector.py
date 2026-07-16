@@ -544,10 +544,6 @@ class OktaConnector(BaseConnector):
         ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/sessions", action_result, method="delete")
 
         if phantom.is_fail(ret_val):
-            message = action_result.get_message()
-            if "Empty response and no information in the header" == message:
-                # This occurs because the delete call in the Okta API only returns a 204 success
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_CLEAR_USER_SESSIONS_SUCC)
             return action_result.get_status()
 
         # Add the response into the data section

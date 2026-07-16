@@ -7,3 +7,4 @@
 * Exclude identity-provider client secrets from persisted action results.
 * Verify the Okta user lifecycle state before reporting enable or disable success.
 * Report rejected, timed-out, or unanswered Okta push verifications as failures.
+* Preserve empty-body HTTP errors when clearing Okta user sessions.
