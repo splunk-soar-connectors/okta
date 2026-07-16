@@ -420,7 +420,6 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failed |
 action_result.parameter.receive_type | string | | UI |
 action_result.parameter.user_id | string | `okta user id` | 00uby4va2hynIj0mS0h7 |
-action_result.data.\*.resetPasswordUrl | string | `url` | https://your-org.okta.com/reset_password/s-HbbqSmqoCLn0pdYTzx |
 action_result.summary | string | | |
 action_result.message | string | | Successfully created one-time token for user to reset password |
 summary.total_objects | numeric | | 1 |
@@ -769,7 +768,6 @@ action_result.data.\*.policy.subject.matchAttribute | string | | |
 action_result.data.\*.policy.subject.matchType | string | | USERNAME_OR_EMAIL |
 action_result.data.\*.policy.subject.userNameTemplate.template | string | | idpuser.userPrincipalName |
 action_result.data.\*.protocol.credentials.client.client_id | string | | 2904b0a4-ebb7-42db-9d35-3280c656c121 |
-action_result.data.\*.protocol.credentials.client.client_secret | string | | qw8y7gztT5DznvmPfmdEmHo |
 action_result.data.\*.protocol.endpoints.authorization.binding | string | | HTTP-REDIRECT |
 action_result.data.\*.protocol.endpoints.authorization.url | string | `url` | https://login.microsoftonline.com/common/oauth2/v2.0/authorize |
 action_result.data.\*.protocol.endpoints.token.binding | string | | HTTP-POST |
