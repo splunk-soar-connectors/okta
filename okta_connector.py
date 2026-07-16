@@ -525,6 +525,15 @@ class OktaConnector(BaseConnector):
                 )
             return action_result.get_status()
 
+        revoke_ret_val, _revoke_response = self._make_rest_call(
+            f"/users/{quote(str(user_id), safe='')}/sessions",
+            action_result,
+            params={"oauthTokens": True},
+            method="delete",
+        )
+        if phantom.is_fail(revoke_ret_val):
+            return action_result.set_status(phantom.APP_ERROR, "User was suspended, but existing sessions or OAuth tokens could not be revoked")
+
         # Add the response into the data section
         action_result.add_data(response)
 
