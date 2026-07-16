@@ -1,3 +1,3 @@
 **Unreleased**
 
-* - Chore: refresh development checks (temporary baseline note).
+* Encode Okta resource identifiers before inserting them into API paths.
