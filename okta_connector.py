@@ -509,7 +509,20 @@ class OktaConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
             if "Cannot suspend a user that is not active" in message:
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_DISABLED_USER_ERR)
+                status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
+                user_status = user_response.get("status") if phantom.is_success(status_ret_val) and isinstance(user_response, dict) else None
+                if user_status in ("SUSPENDED", "DEPROVISIONED"):
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_DISABLED_USER_ERR)
+                if user_status:
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(
+                        phantom.APP_ERROR,
+                        f"User could not be suspended: current lifecycle status is {user_status}. The user is not disabled.",
+                    )
+                return action_result.set_status(
+                    phantom.APP_ERROR, "User could not be suspended and the current lifecycle status could not be verified."
+                )
             return action_result.get_status()
 
         # Add the response into the data section
@@ -558,7 +571,19 @@ class OktaConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
             if "Cannot unsuspend a user that is not suspended" in message:
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
+                status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
+                user_status = user_response.get("status") if phantom.is_success(status_ret_val) and isinstance(user_response, dict) else None
+                if user_status == "ACTIVE":
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
+                if user_status:
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(
+                        phantom.APP_ERROR, f"User could not be unsuspended: current lifecycle status is {user_status}."
+                    )
+                return action_result.set_status(
+                    phantom.APP_ERROR, "User could not be unsuspended and the current lifecycle status could not be verified."
+                )
             return action_result.get_status()
 
         # Add the response into the data section

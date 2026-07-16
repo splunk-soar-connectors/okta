@@ -5,3 +5,4 @@
 * Enable TLS certificate verification by default for Okta connections.
 * Stop paginated actions when the server exceeds the maximum page count.
 * Exclude identity-provider client secrets from persisted action results.
+* Verify the Okta user lifecycle state before reporting enable or disable success.
