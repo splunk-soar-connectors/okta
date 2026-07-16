@@ -254,7 +254,7 @@ class OktaConnector(BaseConnector):
         }
 
         try:
-            r = request_func(url, json=json, data=data, headers=headers, params=params, verify=config.get("verify_server_cert", False))
+            r = request_func(url, json=json, data=data, headers=headers, params=params, verify=config.get("verify_server_cert", True))
         except Exception as e:
             return RetVal(
                 action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {self._get_error_message_from_exception(e)}"),
