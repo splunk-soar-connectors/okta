@@ -420,6 +420,7 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failed |
 action_result.parameter.receive_type | string | | UI |
 action_result.parameter.user_id | string | `okta user id` | 00uby4va2hynIj0mS0h7 |
+action_result.data.\*.resetPasswordUrl | string | `url` | https://your-org.okta.com/reset_password/s-HbbqSmqoCLn0pdYTzx |
 action_result.summary | string | | |
 action_result.message | string | | Successfully created one-time token for user to reset password |
 summary.total_objects | numeric | | 1 |
