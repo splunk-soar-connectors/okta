@@ -1,7 +1,7 @@
 # Okta
 
 Publisher: Splunk <br>
-Connector Version: 2.3.4 <br>
+Connector Version: 3.0.0 <br>
 Product Vendor: Okta <br>
 Product Name: Okta <br>
 Minimum Product Version: 8.6.0

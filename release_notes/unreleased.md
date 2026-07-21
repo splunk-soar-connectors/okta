@@ -1,11 +1,1 @@
 **Unreleased**
-
-* Encode Okta resource identifiers before inserting them into API paths.
-* Escape widget values before inserting them into JavaScript contexts.
-* Enable TLS certificate verification by default for Okta connections.
-* Stop paginated actions when the server exceeds the maximum page count.
-* Exclude identity-provider client secrets from persisted action results.
-* Verify the Okta user lifecycle state before reporting enable or disable success.
-* Report rejected, timed-out, or unanswered Okta push verifications as failures.
-* Preserve empty-body HTTP errors when clearing Okta user sessions.
-* Revoke existing sessions and OAuth tokens when disabling an Okta user.
