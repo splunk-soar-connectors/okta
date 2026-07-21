@@ -18,7 +18,7 @@
 import json
 import sys
 import time
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 
 import phantom.app as phantom
 import requests
@@ -254,7 +254,7 @@ class OktaConnector(BaseConnector):
         }
 
         try:
-            r = request_func(url, json=json, data=data, headers=headers, params=params, verify=config.get("verify_server_cert", False))
+            r = request_func(url, json=json, data=data, headers=headers, params=params, verify=config.get("verify_server_cert", True))
         except Exception as e:
             return RetVal(
                 action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {self._get_error_message_from_exception(e)}"),
@@ -274,7 +274,7 @@ class OktaConnector(BaseConnector):
 
         self.save_progress("Connecting to endpoint /users/me to test connectivity")
         # make rest call
-        ret_val, response = self._make_rest_call("/users/me", action_result, params=None, headers=None)
+        ret_val, _response = self._make_rest_call("/users/me", action_result, params=None, headers=None)
 
         if phantom.is_fail(ret_val):
             self.save_progress(OKTA_TEST_CONNECTIVITY_FAILED)
@@ -292,8 +292,13 @@ class OktaConnector(BaseConnector):
 
         response_list = []
         stop_pagination = False
+        pages_fetched = 0
 
         while not stop_pagination:
+            pages_fetched += 1
+            if pages_fetched > OKTA_MAX_PAGES:
+                action_result.set_status(phantom.APP_ERROR, OKTA_MAX_PAGES_MSG_ERR.format(max_pages=OKTA_MAX_PAGES))
+                return None
             after_count = 0
             # make rest call
             ret_val, response = self._make_rest_call(endpoint, action_result, params=params, headers=headers)
@@ -452,7 +457,9 @@ class OktaConnector(BaseConnector):
             params["sendEmail"] = False
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/lifecycle/reset_password", action_result, params=params, method="post")
+        ret_val, response = self._make_rest_call(
+            f"/users/{quote(str(user_id), safe='')}/lifecycle/reset_password", action_result, params=params, method="post"
+        )
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -476,7 +483,7 @@ class OktaConnector(BaseConnector):
         request = {"credentials": {"password": {"value": new_password}}}
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}", action_result, json=request, method="post")
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result, json=request, method="post")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -497,13 +504,35 @@ class OktaConnector(BaseConnector):
         user_id = self._handle_py_ver_compat_for_input_str(param["id"])
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/lifecycle/suspend", action_result, method="post")
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/lifecycle/suspend", action_result, method="post")
 
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
             if "Cannot suspend a user that is not active" in message:
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_DISABLED_USER_ERR)
+                status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
+                user_status = user_response.get("status") if phantom.is_success(status_ret_val) and isinstance(user_response, dict) else None
+                if user_status in ("SUSPENDED", "DEPROVISIONED"):
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_DISABLED_USER_ERR)
+                if user_status:
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(
+                        phantom.APP_ERROR,
+                        f"User could not be suspended: current lifecycle status is {user_status}. The user is not disabled.",
+                    )
+                return action_result.set_status(
+                    phantom.APP_ERROR, "User could not be suspended and the current lifecycle status could not be verified."
+                )
             return action_result.get_status()
+
+        revoke_ret_val, _revoke_response = self._make_rest_call(
+            f"/users/{quote(str(user_id), safe='')}/sessions",
+            action_result,
+            params={"oauthTokens": True},
+            method="delete",
+        )
+        if phantom.is_fail(revoke_ret_val):
+            return action_result.set_status(phantom.APP_ERROR, "User was suspended, but existing sessions or OAuth tokens could not be revoked")
 
         # Add the response into the data section
         action_result.add_data(response)
@@ -521,13 +550,9 @@ class OktaConnector(BaseConnector):
         user_id = param["id"]
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/sessions", action_result, method="delete")
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/sessions", action_result, method="delete")
 
         if phantom.is_fail(ret_val):
-            message = action_result.get_message()
-            if "Empty response and no information in the header" == message:
-                # This occurs because the delete call in the Okta API only returns a 204 success
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_CLEAR_USER_SESSIONS_SUCC)
             return action_result.get_status()
 
         # Add the response into the data section
@@ -546,12 +571,24 @@ class OktaConnector(BaseConnector):
         user_id = self._handle_py_ver_compat_for_input_str(param["id"])
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/lifecycle/unsuspend", action_result, method="post")
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/lifecycle/unsuspend", action_result, method="post")
 
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
             if "Cannot unsuspend a user that is not suspended" in message:
-                return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
+                status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
+                user_status = user_response.get("status") if phantom.is_success(status_ret_val) and isinstance(user_response, dict) else None
+                if user_status == "ACTIVE":
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
+                if user_status:
+                    action_result.update_summary({"user_status": user_status})
+                    return action_result.set_status(
+                        phantom.APP_ERROR, f"User could not be unsuspended: current lifecycle status is {user_status}."
+                    )
+                return action_result.set_status(
+                    phantom.APP_ERROR, "User could not be unsuspended and the current lifecycle status could not be verified."
+                )
             return action_result.get_status()
 
         # Add the response into the data section
@@ -570,7 +607,7 @@ class OktaConnector(BaseConnector):
         user_id = self._handle_py_ver_compat_for_input_str(param["user_id"])
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}", action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result, params=None, headers=None)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -597,7 +634,7 @@ class OktaConnector(BaseConnector):
         group_id = self._handle_py_ver_compat_for_input_str(param["group_id"])
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/groups/{group_id}", action_result, params=None, headers=None)
+        ret_val, response = self._make_rest_call(f"/groups/{quote(str(group_id), safe='')}", action_result, params=None, headers=None)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -627,7 +664,7 @@ class OktaConnector(BaseConnector):
         user_id = param["user_id"]
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/groups", action_result)
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/groups", action_result)
 
         if phantom.is_fail(ret_val):
             action_result.set_status(phantom.APP_ERROR, response)
@@ -702,6 +739,7 @@ class OktaConnector(BaseConnector):
 
         # Add the response into the data section
         for item in providers_list:
+            item.get("protocol", {}).get("credentials", {}).get("client", {}).pop("client_secret", None)
             action_result.add_data(item)
 
         # Add a dictionary that is made up of the most important values from data into the summary
@@ -720,7 +758,7 @@ class OktaConnector(BaseConnector):
 
         user_id = self._handle_py_ver_compat_for_input_str(param["user_id"])
 
-        roles_list = self._get_paginated_results(f"/users/{user_id}/roles", None, action_result, params=None, headers=None)
+        roles_list = self._get_paginated_results(f"/users/{quote(str(user_id), safe='')}/roles", None, action_result, params=None, headers=None)
 
         if roles_list is None:
             return action_result.set_status(
@@ -753,7 +791,9 @@ class OktaConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, VALUE_LIST_VALIDATION_MSG.format(ROLE_TYPE_VALUE_LIST, "type"))
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/roles", action_result, json={"type": type_param}, method="post")
+        ret_val, response = self._make_rest_call(
+            f"/users/{quote(str(user_id), safe='')}/roles", action_result, json={"type": type_param}, method="post"
+        )
 
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
@@ -776,14 +816,16 @@ class OktaConnector(BaseConnector):
 
         user_id = self._handle_py_ver_compat_for_input_str(param["user_id"])
         role_id = self._handle_py_ver_compat_for_input_str(param["role_id"])
-        ret_val, response = self._make_rest_call(f"/users/{user_id}", action_result, params=None, headers=None)
+        ret_val, _response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result, params=None, headers=None)
 
         # Check the user is valid or not
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, OKTA_INVALID_USER_MSG)
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{user_id}/roles/{role_id}", action_result, method="delete")
+        ret_val, _response = self._make_rest_call(
+            f"/users/{quote(str(user_id), safe='')}/roles/{quote(str(role_id), safe='')}", action_result, method="delete"
+        )
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
             if "Empty response and no information in the header" in message:
@@ -813,7 +855,7 @@ class OktaConnector(BaseConnector):
         factor_type = factor_type.split(" (not yet implemented)")[0]
 
         # get user
-        ret_val, response_user = self._make_rest_call(f"/users/{user_id}", action_result, method="get")
+        ret_val, response_user = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result, method="get")
         if phantom.is_fail(ret_val):
             self.save_progress(f"[-] Okta /users/{user_id}: {response_user!s}")
             return action_result.get_status()
@@ -821,7 +863,7 @@ class OktaConnector(BaseConnector):
         # get factors
         try:
             user_id = response_user["id"]
-            ret_val, response_factor = self._make_rest_call(f"/users/{user_id}/factors", action_result, method="get")
+            ret_val, response_factor = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/factors", action_result, method="get")
             if phantom.is_fail(ret_val):
                 self.save_progress(f"[-] get factors /users/{user_id}/factors: {response_factor!s}")
                 return action_result.get_status()
@@ -905,8 +947,10 @@ class OktaConnector(BaseConnector):
         else:
             return action_result.set_status(phantom.APP_ERROR, UNEXPECTED_RESPONSE_MSG)
 
-        # Return success, no need to set the message, only the status
-        # BaseConnector will create a textual message based off of the summary dictionary
+        factor_result = response_verify_ack.get("factorResult")
+        if factor_result != "SUCCESS":
+            return action_result.set_status(phantom.APP_ERROR, f"Okta push verification did not succeed: {factor_result or 'NO_RESULT'}")
+
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully sent push notification")
 
     def _handle_add_group_user(self, param):
@@ -917,19 +961,21 @@ class OktaConnector(BaseConnector):
         user_id = param["user_id"]
 
         # translate user_id to name:
-        ret_val, response = self._make_rest_call(f"/users/{user_id}", action_result, method="get")
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result, method="get")
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, f"Invalid user_id: {user_id}. {response!s}")
         user_name = response["profile"]["login"]
 
         # translate group_id to name:
-        ret_val, response = self._make_rest_call(f"/groups/{group_id}", action_result, method="get")
+        ret_val, response = self._make_rest_call(f"/groups/{quote(str(group_id), safe='')}", action_result, method="get")
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, f"Invalid group_id: {group_id}")
         group_name = response["profile"]["name"]
 
         # update group membership:
-        ret_val, response = self._make_rest_call(f"/groups/{group_id}/users/{user_id}", action_result, method="put")
+        ret_val, response = self._make_rest_call(
+            f"/groups/{quote(str(group_id), safe='')}/users/{quote(str(user_id), safe='')}", action_result, method="put"
+        )
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -955,19 +1001,21 @@ class OktaConnector(BaseConnector):
         group_id = param["group_id"]
 
         # translate user_id to name:
-        ret_val, response = self._make_rest_call(f"/users/{user_id}", action_result, method="get")
+        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result, method="get")
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, f"Invalid user_id: {user_id}")
         user_name = response["profile"]["login"]
 
         # translate group_id to name:
-        ret_val, response = self._make_rest_call(f"/groups/{group_id}", action_result, method="get")
+        ret_val, response = self._make_rest_call(f"/groups/{quote(str(group_id), safe='')}", action_result, method="get")
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, f"Invalid group_id: {group_id}")
         group_name = response["profile"]["name"]
 
         # remove user from group
-        ret_val, response = self._make_rest_call(f"/groups/{group_id}/users/{user_id}", action_result, method="delete")
+        ret_val, response = self._make_rest_call(
+            f"/groups/{quote(str(group_id), safe='')}/users/{quote(str(user_id), safe='')}", action_result, method="delete"
+        )
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()

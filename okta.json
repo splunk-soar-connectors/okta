@@ -37,7 +37,7 @@
         "verify_server_cert": {
             "description": "Verify server certificate",
             "data_type": "boolean",
-            "default": false,
+            "default": true,
             "order": 2
         }
     },
@@ -3105,13 +3105,6 @@
                     "data_path": "action_result.data.*.protocol.credentials.client.client_id",
                     "example_values": [
                         "2904b0a4-ebb7-42db-9d35-3280c656c121"
-                    ],
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.protocol.credentials.client.client_secret",
-                    "example_values": [
-                        "qw8y7gztT5DznvmPfmdEmHo"
                     ],
                     "data_type": "string"
                 },

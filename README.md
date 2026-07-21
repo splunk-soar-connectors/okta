@@ -769,7 +769,6 @@ action_result.data.\*.policy.subject.matchAttribute | string | | |
 action_result.data.\*.policy.subject.matchType | string | | USERNAME_OR_EMAIL |
 action_result.data.\*.policy.subject.userNameTemplate.template | string | | idpuser.userPrincipalName |
 action_result.data.\*.protocol.credentials.client.client_id | string | | 2904b0a4-ebb7-42db-9d35-3280c656c121 |
-action_result.data.\*.protocol.credentials.client.client_secret | string | | qw8y7gztT5DznvmPfmdEmHo |
 action_result.data.\*.protocol.endpoints.authorization.binding | string | | HTTP-REDIRECT |
 action_result.data.\*.protocol.endpoints.authorization.url | string | `url` | https://login.microsoftonline.com/common/oauth2/v2.0/authorize |
 action_result.data.\*.protocol.endpoints.token.binding | string | | HTTP-POST |

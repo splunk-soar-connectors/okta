@@ -21,6 +21,8 @@ OKTA_RESET_PASSWORD_SUCC = "Successfully created one-time token for user to rese
 OKTA_LIMIT_INVALID_MSG_ERR = "Please provide a valid positive integer value for 'limit' action parameter"
 OKTA_LIMIT_NON_ZERO_POSITIVE_MSG_ERR = "Please provide a valid non-zero positive integer value for 'limit' action parameter"
 OKTA_PAGINATION_MSG_ERR = "Error occurred while fetching paginated response for action: {action_name}. Error Details: {error_detail}"
+OKTA_MAX_PAGES = 1000
+OKTA_MAX_PAGES_MSG_ERR = "Server kept indicating more pages; aborted pagination after {max_pages} pages"
 
 OKTA_DISABLE_USER_SUCC = "Successfully disabled the user"
 OKTA_ALREADY_DISABLED_USER_ERR = "User is already disabled"
