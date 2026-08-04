@@ -123,7 +123,7 @@ This table lists the configuration variables required to operate Okta. These var
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
 **api_key** | required | password | API token |
-**base_url** | required | string | Your organization's url. Example: https://your-org.okta.com |
+**base_url** | required | string | Your organization's HTTPS URL. Example: https://your-org.okta.com |
 **verify_server_cert** | optional | boolean | Verify server certificate |
 
 ### Supported Actions

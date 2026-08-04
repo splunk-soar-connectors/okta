@@ -15,10 +15,11 @@
 #
 #
 # Phantom App imports
+import hashlib
 import json
 import sys
 import time
-from urllib.parse import quote, unquote
+from urllib.parse import quote, unquote, urlparse
 
 import phantom.app as phantom
 import requests
@@ -1128,7 +1129,26 @@ class OktaConnector(BaseConnector):
         config = self.get_config()
 
         self._api_token = config[OKTA_API_TOKEN]
-        self._base_url = self._handle_py_ver_compat_for_input_str(config[OKTA_BASE_URL])
+        self._base_url = self._handle_py_ver_compat_for_input_str(config[OKTA_BASE_URL]).rstrip("/")
+
+        parsed_base_url = urlparse(self._base_url)
+        if parsed_base_url.scheme.lower() != "https" or not parsed_base_url.hostname:
+            return self.set_status(phantom.APP_ERROR, "The base_url asset setting must be a valid HTTPS URL.")
+
+        token_fingerprint = hashlib.sha256(str(self._api_token).encode("utf-8")).hexdigest()
+        credential_binding = self._state.get("credential_binding")
+        if (
+            isinstance(credential_binding, dict)
+            and credential_binding.get("token_fingerprint") == token_fingerprint
+            and credential_binding.get("base_url") != self._base_url
+        ):
+            return self.set_status(
+                phantom.APP_ERROR,
+                "The base_url asset setting changed while the stored API token remained unchanged. "
+                "Enter a new API token to authorize the new endpoint.",
+            )
+
+        self._state["credential_binding"] = {"base_url": self._base_url, "token_fingerprint": token_fingerprint}
 
         # The current version of this app as defined in the app json
         self._app_version = self.get_app_json().get("app_version", "")

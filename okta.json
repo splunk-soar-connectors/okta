@@ -29,7 +29,7 @@
             "order": 1
         },
         "base_url": {
-            "description": "Your organization's url. Example: https://your-org.okta.com",
+            "description": "Your organization's HTTPS URL. Example: https://your-org.okta.com",
             "data_type": "string",
             "required": true,
             "order": 0
