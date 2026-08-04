@@ -679,15 +679,18 @@ class OktaConnector(BaseConnector):
 
         user_id = param["user_id"]
 
-        # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/groups", action_result)
+        groups_list = self._get_paginated_results(
+            f"/users/{quote(str(user_id), safe='')}/groups", None, action_result, params=None, headers=None
+        )
 
-        if phantom.is_fail(ret_val):
-            action_result.set_status(phantom.APP_ERROR, response)
-            return action_result.get_status()
+        if groups_list is None:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier(), error_detail=action_result.get_message()),
+            )
 
         # Add the response into the data section
-        for item in response:
+        for item in groups_list:
             action_result.add_data(item)
 
         summary = action_result.update_summary({})

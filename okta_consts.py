@@ -14,7 +14,7 @@
 # and limitations under the License.
 OKTA_BASE_URL = "base_url"
 OKTA_API_TOKEN = "api_key"
-OKTA_PAGINATED_ACTIONS_LIST = ["list_users", "list_user_groups", "list_providers", "list_roles"]
+OKTA_PAGINATED_ACTIONS_LIST = ["list_users", "list_user_groups", "list_providers", "list_roles", "get_user_groups"]
 
 OKTA_RESET_PASSWORD_SUCC = "Successfully created one-time token for user to reset password"  # pragma: allowlist secret
 
