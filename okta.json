@@ -29,7 +29,7 @@
             "order": 1
         },
         "base_url": {
-            "description": "Your organization's url. Example: https://your-org.okta.com",
+            "description": "Your organization's HTTPS URL. Example: https://your-org.okta.com",
             "data_type": "string",
             "required": true,
             "order": 0
@@ -1417,13 +1417,6 @@
                         "00uby4va2hynIj0mS0h7"
                     ],
                     "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.new_password",
-                    "example_values": [
-                        "newPassword"
-                    ],
-                    "data_type": "password"
                 },
                 {
                     "data_path": "action_result.data.*._links.activate.href",

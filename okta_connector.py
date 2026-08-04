@@ -15,10 +15,11 @@
 #
 #
 # Phantom App imports
+import hashlib
 import json
 import sys
 import time
-from urllib.parse import quote, unquote
+from urllib.parse import quote, unquote, urlparse
 
 import phantom.app as phantom
 import requests
@@ -101,11 +102,16 @@ class OktaConnector(BaseConnector):
 
         # You should process the error returned in the json
         error_msg = self._handle_py_ver_compat_for_input_str(r.text.replace("{", "{{").replace("}", "}}"))
-        error_msg = resp_json.get("errorSummary", error_msg)
+        if isinstance(resp_json, dict):
+            error_summary = resp_json.get("errorSummary")
+            if isinstance(error_summary, str):
+                error_msg = error_summary
 
-        error_cause = resp_json.get("errorCauses", [{}])
-        if error_cause:
-            error_msg += ". Error Causes: " + error_cause[0].get("errorSummary", "")
+            error_causes = resp_json.get("errorCauses")
+            if isinstance(error_causes, list) and error_causes and isinstance(error_causes[0], dict):
+                cause_summary = error_causes[0].get("errorSummary")
+                if isinstance(cause_summary, str) and cause_summary:
+                    error_msg += ". Error Causes: " + cause_summary
 
         message = f"Error from server. Status Code: {r.status_code} Data from server: {error_msg}"
 
@@ -131,11 +137,16 @@ class OktaConnector(BaseConnector):
 
         # You should process the error returned in the json
         error_msg = self._handle_py_ver_compat_for_input_str(r.text.replace("{", "{{").replace("}", "}}"))
-        error_msg = resp_json.get("errorSummary", error_msg)
+        if isinstance(resp_json, dict):
+            error_summary = resp_json.get("errorSummary")
+            if isinstance(error_summary, str):
+                error_msg = error_summary
 
-        error_cause = resp_json.get("errorCauses", [{}])
-        if error_cause:
-            error_msg += ". Error Causes: " + error_cause[0].get("errorSummary", "")
+            error_causes = resp_json.get("errorCauses")
+            if isinstance(error_causes, list) and error_causes and isinstance(error_causes[0], dict):
+                cause_summary = error_causes[0].get("errorSummary")
+                if isinstance(cause_summary, str) and cause_summary:
+                    error_msg += ". Error Causes: " + cause_summary
 
         message = f"Error from server. Status Code: {r.status_code} Data from server: {error_msg}"
 
@@ -254,7 +265,15 @@ class OktaConnector(BaseConnector):
         }
 
         try:
-            r = request_func(url, json=json, data=data, headers=headers, params=params, verify=config.get("verify_server_cert", True))
+            r = request_func(
+                url,
+                json=json,
+                data=data,
+                headers=headers,
+                params=params,
+                verify=config.get("verify_server_cert", True),
+                timeout=OKTA_DEFAULT_REQUEST_TIMEOUT,
+            )
         except Exception as e:
             return RetVal(
                 action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {self._get_error_message_from_exception(e)}"),
@@ -495,6 +514,32 @@ class OktaConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS, OKTA_SET_PASSWORD_SUCC)
 
+    def _get_owned_suspensions(self, action_result):
+        try:
+            installation_id = self.get_product_installation_id()
+        except Exception as e:
+            action_result.set_status(
+                phantom.APP_ERROR,
+                f"Unable to determine suspension ownership. Details: {self._get_error_message_from_exception(e)}",
+            )
+            return None
+
+        if not installation_id:
+            action_result.set_status(phantom.APP_ERROR, "Unable to determine suspension ownership for this SOAR installation.")
+            return None
+
+        ownership_by_installation = self._state.setdefault("suspended_users_by_installation", {})
+        if not isinstance(ownership_by_installation, dict):
+            action_result.set_status(phantom.APP_ERROR, "Stored suspension ownership data has an unexpected format.")
+            return None
+
+        owned_suspensions = ownership_by_installation.setdefault(str(installation_id), [])
+        if not isinstance(owned_suspensions, list):
+            action_result.set_status(phantom.APP_ERROR, "Stored suspension ownership data has an unexpected format.")
+            return None
+
+        return owned_suspensions
+
     def _handle_disable_user(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
@@ -502,6 +547,10 @@ class OktaConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         user_id = self._handle_py_ver_compat_for_input_str(param["id"])
+
+        owned_suspensions = self._get_owned_suspensions(action_result)
+        if owned_suspensions is None:
+            return action_result.get_status()
 
         # make rest call
         ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/lifecycle/suspend", action_result, method="post")
@@ -525,10 +574,13 @@ class OktaConnector(BaseConnector):
                 )
             return action_result.get_status()
 
+        if str(user_id) not in owned_suspensions:
+            owned_suspensions.append(str(user_id))
+
         revoke_ret_val, _revoke_response = self._make_rest_call(
             f"/users/{quote(str(user_id), safe='')}/sessions",
             action_result,
-            params={"oauthTokens": True},
+            params={"oauthTokens": "true"},
             method="delete",
         )
         if phantom.is_fail(revoke_ret_val):
@@ -550,7 +602,12 @@ class OktaConnector(BaseConnector):
         user_id = param["id"]
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/sessions", action_result, method="delete")
+        ret_val, response = self._make_rest_call(
+            f"/users/{quote(str(user_id), safe='')}/sessions",
+            action_result,
+            params={"oauthTokens": "true"},
+            method="delete",
+        )
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -570,6 +627,36 @@ class OktaConnector(BaseConnector):
 
         user_id = self._handle_py_ver_compat_for_input_str(param["id"])
 
+        owned_suspensions = self._get_owned_suspensions(action_result)
+        if owned_suspensions is None:
+            return action_result.get_status()
+
+        status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
+        if phantom.is_fail(status_ret_val):
+            return action_result.get_status()
+
+        user_status = user_response.get("status") if isinstance(user_response, dict) else None
+        if user_status:
+            action_result.update_summary({"user_status": user_status})
+
+        if user_status == "ACTIVE":
+            if str(user_id) in owned_suspensions:
+                owned_suspensions.remove(str(user_id))
+            return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
+
+        if user_status != "SUSPENDED":
+            if user_status:
+                return action_result.set_status(phantom.APP_ERROR, f"User could not be unsuspended: current lifecycle status is {user_status}.")
+            return action_result.set_status(
+                phantom.APP_ERROR, "User could not be unsuspended and the current lifecycle status could not be verified."
+            )
+
+        if str(user_id) not in owned_suspensions:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Refusing to enable user '{user_id}' because this SOAR installation did not record the suspension.",
+            )
+
         # make rest call
         ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/lifecycle/unsuspend", action_result, method="post")
 
@@ -579,6 +666,7 @@ class OktaConnector(BaseConnector):
                 status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
                 user_status = user_response.get("status") if phantom.is_success(status_ret_val) and isinstance(user_response, dict) else None
                 if user_status == "ACTIVE":
+                    owned_suspensions.remove(str(user_id))
                     action_result.update_summary({"user_status": user_status})
                     return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
                 if user_status:
@@ -590,6 +678,8 @@ class OktaConnector(BaseConnector):
                     phantom.APP_ERROR, "User could not be unsuspended and the current lifecycle status could not be verified."
                 )
             return action_result.get_status()
+
+        owned_suspensions.remove(str(user_id))
 
         # Add the response into the data section
         action_result.add_data(response)
@@ -663,15 +753,18 @@ class OktaConnector(BaseConnector):
 
         user_id = param["user_id"]
 
-        # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/groups", action_result)
+        groups_list = self._get_paginated_results(
+            f"/users/{quote(str(user_id), safe='')}/groups", None, action_result, params=None, headers=None
+        )
 
-        if phantom.is_fail(ret_val):
-            action_result.set_status(phantom.APP_ERROR, response)
-            return action_result.get_status()
+        if groups_list is None:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                OKTA_PAGINATION_MSG_ERR.format(action_name=self.get_action_identifier(), error_detail=action_result.get_message()),
+            )
 
         # Add the response into the data section
-        for item in response:
+        for item in groups_list:
             action_result.add_data(item)
 
         summary = action_result.update_summary({})
@@ -1113,7 +1206,26 @@ class OktaConnector(BaseConnector):
         config = self.get_config()
 
         self._api_token = config[OKTA_API_TOKEN]
-        self._base_url = self._handle_py_ver_compat_for_input_str(config[OKTA_BASE_URL])
+        self._base_url = self._handle_py_ver_compat_for_input_str(config[OKTA_BASE_URL]).rstrip("/")
+
+        parsed_base_url = urlparse(self._base_url)
+        if parsed_base_url.scheme.lower() != "https" or not parsed_base_url.hostname:
+            return self.set_status(phantom.APP_ERROR, "The base_url asset setting must be a valid HTTPS URL.")
+
+        token_fingerprint = hashlib.sha256(str(self._api_token).encode("utf-8")).hexdigest()
+        credential_binding = self._state.get("credential_binding")
+        if (
+            isinstance(credential_binding, dict)
+            and credential_binding.get("token_fingerprint") == token_fingerprint
+            and credential_binding.get("base_url") != self._base_url
+        ):
+            return self.set_status(
+                phantom.APP_ERROR,
+                "The base_url asset setting changed while the stored API token remained unchanged. "
+                "Enter a new API token to authorize the new endpoint.",
+            )
+
+        self._state["credential_binding"] = {"base_url": self._base_url, "token_fingerprint": token_fingerprint}
 
         # The current version of this app as defined in the app json
         self._app_version = self.get_app_json().get("app_version", "")
@@ -1157,7 +1269,7 @@ if __name__ == "__main__":
         try:
             login_url = BaseConnector._get_phantom_base_url() + "/login"
             print("Accessing the Login page")
-            r = requests.get(login_url, verify=verify)  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
+            r = requests.get(login_url, verify=verify, timeout=OKTA_DEFAULT_REQUEST_TIMEOUT)
             csrftoken = r.cookies["csrftoken"]
 
             data = dict()
@@ -1170,9 +1282,7 @@ if __name__ == "__main__":
             headers["Referer"] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
-                login_url, verify=verify, data=data, headers=headers
-            )
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=OKTA_DEFAULT_REQUEST_TIMEOUT)
             session_id = r2.cookies["sessionid"]
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: " + str(e))
