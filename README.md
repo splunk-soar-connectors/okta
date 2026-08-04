@@ -448,7 +448,6 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string | | success failed |
 action_result.parameter.id | string | `okta user id` | 00uby4va2hynIj0mS0h7 |
-action_result.parameter.new_password | password | | newPassword |
 action_result.data.\*.\_links.activate.href | string | | https://your-org.okta.com/api/v1/users/00uvgl84d0wO31Lr60h7/lifecycle/activate |
 action_result.data.\*.\_links.activate.method | string | | POST |
 action_result.data.\*.\_links.changePassword.href | string | `url` | https://your-org.okta.com/api/v1/users/00uaa8hodkEIHTO1s0h7/credentials/change_password |

@@ -132,17 +132,17 @@
             {% endfor %}
           </tbody>
         </table>
-      </div>
-    {% else %}
-      <p class="wf-h4-style">Could not retrieve user</p>
-    {% endif %}
-    <br>
-    <!------------------- For each Result END ---------------------->
-  {% endfor %}
-  <!-- loop for each result end -->
-</div>
-<!-- Main Div -->
-<script>
+        </div>
+      {% else %}
+        <p class="wf-h4-style">Could not retrieve user</p>
+      {% endif %}
+      <br>
+      <!------------------- For each Result END ---------------------->
+    {% endfor %}
+    <!-- loop for each result end -->
+  </div>
+  <!-- Main Div -->
+  <script>
   $.extend(true, $.fn.dataTable.defaults, {
       "searching": true,
       "bLengthChange": false,
@@ -161,6 +161,6 @@
     });
     $('.dataTable').DataTable();
 
-</script>
+  </script>
 {% endblock %}
 <!-- Main Start Block -->
