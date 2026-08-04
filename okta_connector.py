@@ -265,7 +265,15 @@ class OktaConnector(BaseConnector):
         }
 
         try:
-            r = request_func(url, json=json, data=data, headers=headers, params=params, verify=config.get("verify_server_cert", True))
+            r = request_func(
+                url,
+                json=json,
+                data=data,
+                headers=headers,
+                params=params,
+                verify=config.get("verify_server_cert", True),
+                timeout=OKTA_DEFAULT_REQUEST_TIMEOUT,
+            )
         except Exception as e:
             return RetVal(
                 action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {self._get_error_message_from_exception(e)}"),
@@ -1195,7 +1203,7 @@ if __name__ == "__main__":
         try:
             login_url = BaseConnector._get_phantom_base_url() + "/login"
             print("Accessing the Login page")
-            r = requests.get(login_url, verify=verify)  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
+            r = requests.get(login_url, verify=verify, timeout=OKTA_DEFAULT_REQUEST_TIMEOUT)
             csrftoken = r.cookies["csrftoken"]
 
             data = dict()
@@ -1208,9 +1216,7 @@ if __name__ == "__main__":
             headers["Referer"] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(  # nosemgrep: python.requests.best-practice.use-timeout.use-timeout
-                login_url, verify=verify, data=data, headers=headers
-            )
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=OKTA_DEFAULT_REQUEST_TIMEOUT)
             session_id = r2.cookies["sessionid"]
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: " + str(e))

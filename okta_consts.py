@@ -13,6 +13,7 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 OKTA_BASE_URL = "base_url"
+OKTA_DEFAULT_REQUEST_TIMEOUT = 30
 OKTA_API_TOKEN = "api_key"
 OKTA_PAGINATED_ACTIONS_LIST = ["list_users", "list_user_groups", "list_providers", "list_roles", "get_user_groups"]
 
