@@ -514,6 +514,32 @@ class OktaConnector(BaseConnector):
         # BaseConnector will create a textual message based off of the summary dictionary
         return action_result.set_status(phantom.APP_SUCCESS, OKTA_SET_PASSWORD_SUCC)
 
+    def _get_owned_suspensions(self, action_result):
+        try:
+            installation_id = self.get_product_installation_id()
+        except Exception as e:
+            action_result.set_status(
+                phantom.APP_ERROR,
+                f"Unable to determine suspension ownership. Details: {self._get_error_message_from_exception(e)}",
+            )
+            return None
+
+        if not installation_id:
+            action_result.set_status(phantom.APP_ERROR, "Unable to determine suspension ownership for this SOAR installation.")
+            return None
+
+        ownership_by_installation = self._state.setdefault("suspended_users_by_installation", {})
+        if not isinstance(ownership_by_installation, dict):
+            action_result.set_status(phantom.APP_ERROR, "Stored suspension ownership data has an unexpected format.")
+            return None
+
+        owned_suspensions = ownership_by_installation.setdefault(str(installation_id), [])
+        if not isinstance(owned_suspensions, list):
+            action_result.set_status(phantom.APP_ERROR, "Stored suspension ownership data has an unexpected format.")
+            return None
+
+        return owned_suspensions
+
     def _handle_disable_user(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
@@ -521,6 +547,10 @@ class OktaConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         user_id = self._handle_py_ver_compat_for_input_str(param["id"])
+
+        owned_suspensions = self._get_owned_suspensions(action_result)
+        if owned_suspensions is None:
+            return action_result.get_status()
 
         # make rest call
         ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/lifecycle/suspend", action_result, method="post")
@@ -543,6 +573,9 @@ class OktaConnector(BaseConnector):
                     phantom.APP_ERROR, "User could not be suspended and the current lifecycle status could not be verified."
                 )
             return action_result.get_status()
+
+        if str(user_id) not in owned_suspensions:
+            owned_suspensions.append(str(user_id))
 
         revoke_ret_val, _revoke_response = self._make_rest_call(
             f"/users/{quote(str(user_id), safe='')}/sessions",
@@ -594,6 +627,36 @@ class OktaConnector(BaseConnector):
 
         user_id = self._handle_py_ver_compat_for_input_str(param["id"])
 
+        owned_suspensions = self._get_owned_suspensions(action_result)
+        if owned_suspensions is None:
+            return action_result.get_status()
+
+        status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
+        if phantom.is_fail(status_ret_val):
+            return action_result.get_status()
+
+        user_status = user_response.get("status") if isinstance(user_response, dict) else None
+        if user_status:
+            action_result.update_summary({"user_status": user_status})
+
+        if user_status == "ACTIVE":
+            if str(user_id) in owned_suspensions:
+                owned_suspensions.remove(str(user_id))
+            return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
+
+        if user_status != "SUSPENDED":
+            if user_status:
+                return action_result.set_status(phantom.APP_ERROR, f"User could not be unsuspended: current lifecycle status is {user_status}.")
+            return action_result.set_status(
+                phantom.APP_ERROR, "User could not be unsuspended and the current lifecycle status could not be verified."
+            )
+
+        if str(user_id) not in owned_suspensions:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Refusing to enable user '{user_id}' because this SOAR installation did not record the suspension.",
+            )
+
         # make rest call
         ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/lifecycle/unsuspend", action_result, method="post")
 
@@ -603,6 +666,7 @@ class OktaConnector(BaseConnector):
                 status_ret_val, user_response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}", action_result)
                 user_status = user_response.get("status") if phantom.is_success(status_ret_val) and isinstance(user_response, dict) else None
                 if user_status == "ACTIVE":
+                    owned_suspensions.remove(str(user_id))
                     action_result.update_summary({"user_status": user_status})
                     return action_result.set_status(phantom.APP_SUCCESS, OKTA_ALREADY_ENABLED_USER_ERR)
                 if user_status:
@@ -614,6 +678,8 @@ class OktaConnector(BaseConnector):
                     phantom.APP_ERROR, "User could not be unsuspended and the current lifecycle status could not be verified."
                 )
             return action_result.get_status()
+
+        owned_suspensions.remove(str(user_id))
 
         # Add the response into the data section
         action_result.add_data(response)
