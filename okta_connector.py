@@ -538,7 +538,7 @@ class OktaConnector(BaseConnector):
         revoke_ret_val, _revoke_response = self._make_rest_call(
             f"/users/{quote(str(user_id), safe='')}/sessions",
             action_result,
-            params={"oauthTokens": True},
+            params={"oauthTokens": "true"},
             method="delete",
         )
         if phantom.is_fail(revoke_ret_val):
@@ -560,7 +560,12 @@ class OktaConnector(BaseConnector):
         user_id = param["id"]
 
         # make rest call
-        ret_val, response = self._make_rest_call(f"/users/{quote(str(user_id), safe='')}/sessions", action_result, method="delete")
+        ret_val, response = self._make_rest_call(
+            f"/users/{quote(str(user_id), safe='')}/sessions",
+            action_result,
+            params={"oauthTokens": "true"},
+            method="delete",
+        )
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
