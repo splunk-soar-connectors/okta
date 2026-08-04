@@ -101,11 +101,16 @@ class OktaConnector(BaseConnector):
 
         # You should process the error returned in the json
         error_msg = self._handle_py_ver_compat_for_input_str(r.text.replace("{", "{{").replace("}", "}}"))
-        error_msg = resp_json.get("errorSummary", error_msg)
+        if isinstance(resp_json, dict):
+            error_summary = resp_json.get("errorSummary")
+            if isinstance(error_summary, str):
+                error_msg = error_summary
 
-        error_cause = resp_json.get("errorCauses", [{}])
-        if error_cause:
-            error_msg += ". Error Causes: " + error_cause[0].get("errorSummary", "")
+            error_causes = resp_json.get("errorCauses")
+            if isinstance(error_causes, list) and error_causes and isinstance(error_causes[0], dict):
+                cause_summary = error_causes[0].get("errorSummary")
+                if isinstance(cause_summary, str) and cause_summary:
+                    error_msg += ". Error Causes: " + cause_summary
 
         message = f"Error from server. Status Code: {r.status_code} Data from server: {error_msg}"
 
@@ -131,11 +136,16 @@ class OktaConnector(BaseConnector):
 
         # You should process the error returned in the json
         error_msg = self._handle_py_ver_compat_for_input_str(r.text.replace("{", "{{").replace("}", "}}"))
-        error_msg = resp_json.get("errorSummary", error_msg)
+        if isinstance(resp_json, dict):
+            error_summary = resp_json.get("errorSummary")
+            if isinstance(error_summary, str):
+                error_msg = error_summary
 
-        error_cause = resp_json.get("errorCauses", [{}])
-        if error_cause:
-            error_msg += ". Error Causes: " + error_cause[0].get("errorSummary", "")
+            error_causes = resp_json.get("errorCauses")
+            if isinstance(error_causes, list) and error_causes and isinstance(error_causes[0], dict):
+                cause_summary = error_causes[0].get("errorSummary")
+                if isinstance(cause_summary, str) and cause_summary:
+                    error_msg += ". Error Causes: " + cause_summary
 
         message = f"Error from server. Status Code: {r.status_code} Data from server: {error_msg}"
 
